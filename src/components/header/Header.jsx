@@ -9,20 +9,21 @@ const Header = () => {
     const loggedInUser = getLoggedUser();
 
 
-    const handleLogout = () => {
-        localStorage.clear('user');
-        dispatch(logout());
+    const handleLogout = async () => {
+        await dispatch(logout());
         navigate('/')
     }
     return (
         <header className="header">
             <div className="brand">{loggedInUser?.name}</div>
-            <div className="header-icons">
+            <div className="header-icon">
                 <div className="user-initial">
                     {loggedInUser?.name?.slice(0, 1)}
+                </div>
+                <div >
+                    <p className='header-role'>{loggedInUser?.role}</p>
 
                 </div>
-
                 <button className="logout-btn" onClick={handleLogout}>
                     Logout
                 </button>

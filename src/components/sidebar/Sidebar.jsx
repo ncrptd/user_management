@@ -2,11 +2,16 @@ import { useState } from 'react';
 import * as FaIcons from 'react-icons/fa';
 import * as AiIcons from 'react-icons/ai';
 import { Link, NavLink } from 'react-router-dom';
-// import { SidebarData } from './SidebarData';
 import './Sidebar.css';
 import { IconContext } from 'react-icons';
 import { getLoggedUser } from '../../utils/getLoggedUser';
 
+const navigationItems = [
+    { path: '/', label: 'Home', roles: ['ROOT_ADMIN', 'TENANT_ADMIN', 'TENANT', 'USER'] },
+    { path: '/tenants', label: 'Tenants', roles: ['ROOT_ADMIN'] },
+    { path: '/users', label: 'Users', roles: ['TENANT_ADMIN', 'ROOT_ADMIN'] },
+    { path: '/upload', label: 'Upload', roles: ['TENANT_ADMIN', 'ROOT_ADMIN'] },
+];
 
 function Sidebar() {
     const [sidebar, setSidebar] = useState(false);
@@ -30,25 +35,15 @@ function Sidebar() {
                             </Link>
                         </li>
                         <div className="menu-items">
-                            <li>
-                                <NavLink to='/' className='menu-item'>
-                                    Home
-                                </NavLink>
-                            </li>
-                            {loggedInUser?.role === 'root-admin' && (
-                                <li>
-                                    <NavLink to='/tenants' className='menu-item'>
-                                        Tenants
-                                    </NavLink>
-                                </li>
-                            )}
-                            {(loggedInUser?.role === 'tenant-admin' || loggedInUser?.role === 'root-admin') && (
-                                <li>
-                                    <NavLink to='/users' className='menu-item'>
-                                        Users
-                                    </NavLink>
-                                </li>
-                            )}
+                            {navigationItems.map(({ path, label, roles }) => (
+                                roles.includes(loggedInUser?.role) && (
+                                    <li key={path}>
+                                        <NavLink to={path} className='menu-item'>
+                                            {label}
+                                        </NavLink>
+                                    </li>
+                                )
+                            ))}
                         </div>
                     </ul>
                 </div>

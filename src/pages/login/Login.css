@@ -56,3 +56,30 @@
 	text-align: center;
 	margin-top: 10px;
 }
+.error {
+	margin: 10px auto;
+	color: red;
+	text-align: center;
+	font-size: 1rem;
+}
+
+.password-input-container {
+	position: relative;
+}
+
+.password-toggle {
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	cursor: pointer;
+}
+
+.password-toggle svg {
+	font-size: 1.2rem;
+	color: #666;
+}
+
+.password-toggle:hover svg {
+	color: #333;
+}

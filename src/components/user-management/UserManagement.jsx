@@ -2,12 +2,12 @@
 import { useNavigate } from 'react-router-dom';
 import './UserManagement.css';
 
-const UserManagement = ({ users, param, className }) => {
+const UserManagement = ({ users, className }) => {
     const navigate = useNavigate();
 
-    const onManage = () => {
+    const onManage = (id) => {
 
-        return navigate(`/user-details/${param}`)
+        return navigate(`/user-details/${id}`)
     }
 
     return (
@@ -22,13 +22,13 @@ const UserManagement = ({ users, param, className }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {users.map((user) => (
+                    {users?.map((user) => (
                         <tr key={user.id}>
                             <td>{user.organization}</td>
                             <td>{user.email}</td>
                             <td className='role'>{user.role}</td>
                             <td className="actions">
-                                <button onClick={() => onManage()}>Manage</button>
+                                <button onClick={() => onManage(user?.id)}>Manage</button>
                             </td>
                         </tr>
                     ))}

@@ -1,0 +1,15 @@
+.button-container {
+	margin-top: 10px;
+}
+.delete-btn {
+	background-color: #d9534f;
+	color: #fff;
+	border: none;
+	margin-right: 10px;
+}
+
+.cancel-btn {
+	background-color: #5bc0de;
+	color: #fff;
+	border: none;
+}

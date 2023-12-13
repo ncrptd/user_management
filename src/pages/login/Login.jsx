@@ -1,18 +1,19 @@
 import { useState } from 'react';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import './Login.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../../features/auth/authSlice';
 import { useNavigate } from 'react-router-dom';
+// import { GoogleLogin } from '@react-oauth/google';
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const status = useSelector((state) => state.auth.status);
-  // const error = useSelector((state) => state.auth.error)
-
+  const error = useSelector((state) => state.auth.error);
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -22,13 +23,14 @@ const Login = () => {
     setPassword(event.target.value);
   };
 
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+
   const handleLoginSubmit = async (event) => {
     event.preventDefault();
-    if (status === 'idle') {
-      await dispatch(login({ email, password }));
-      navigate('/')
-    }
-
+    await dispatch(login({ email, password }));
+    navigate('/');
   };
 
   return (
@@ -39,11 +41,35 @@ const Login = () => {
           <label>Email:</label>
           <input type="email" value={email} onChange={handleEmailChange} required />
           <label>Password:</label>
-          <input type="password" value={password} onChange={handlePasswordChange} required />
+          <div className="password-input-container">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={handlePasswordChange}
+              required
+            />
+            <span className="password-toggle" onClick={handleTogglePasswordVisibility}>
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
+          </div>
           <button type="submit">Login</button>
         </form>
-        <a href="#" className="google-login">Login with Google</a>
-        <a href="#" className="forgot-password">Forgot Password?</a>
+
+        {/* <div className="google-login">
+          <GoogleLogin
+            onSuccess={(credentialResponse) => {
+              console.log(credentialResponse);
+            }}
+            onError={() => {
+              console.log('Login Failed');
+            }}
+          />
+        </div> */}
+
+        <a href="#" className="forgot-password">
+          Forgot Password?
+        </a>
+        {error && <p className="error">{error}</p>}
       </div>
     </div>
   );

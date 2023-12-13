@@ -3,3 +3,9 @@
 	flex-direction: column;
 	justify-content: space-between;
 }
+.regular-user {
+	text-align: center;
+	font-size: 1.5rem;
+	color: red;
+	margin-top: 50px;
+}

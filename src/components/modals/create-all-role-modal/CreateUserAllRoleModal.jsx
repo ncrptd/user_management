@@ -1,19 +1,18 @@
 import { useState } from 'react'
 import { createUser } from '../../../features/users/usersSlice';
 import { useDispatch } from 'react-redux';
-import './CreateUserModal.css'
-import { getLoggedUser } from '../../../utils/getLoggedUser';
-import { toggleCreateUserModal } from '../../../features/modals/modalsSlice';
-import toast from 'react-hot-toast';
-const roles = ['user', 'tenant', 'tenant-admin'];
+import './CreateAllRoleModal.css'
+import { toggleCreateAllRoleModal } from '../../../features/modals/modalsSlice';
+const roles = ['USER', 'TENANT', 'TENANT_ADMIN'];
 
 
 
-function CreateUserModal() {
+function CreateAllRoleModal() {
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
         email: '',
+        organization: '',
         password: '',
         confirmPassword: '',
         role: roles[0],
@@ -21,7 +20,6 @@ function CreateUserModal() {
 
     const [passwordError, setPasswordError] = useState(false);
 
-    const loggedInUser = getLoggedUser();
 
     const dispatch = useDispatch();
 
@@ -39,16 +37,22 @@ function CreateUserModal() {
         if (formData.password !== formData.confirmPassword) {
             setPasswordError(true)
         } else {
-            const userDetails = { ...formData, organization: loggedInUser.organization }
-            // await dispatch(createUser(userDetails));
-            // notify('Successfully Created User')
-            toast.promise(dispatch(createUser(userDetails)), {
-                loading: 'Creating User',
-                success: 'Successfully Created User',
-                error: 'Error Creating User',
+            const { firstName,
+                lastName,
+                email,
+                organization,
+                password,
+                role } = formData;
+            dispatch(createUser({
+                firstName,
+                lastName,
+                email,
+                organization,
+                password,
+                role
             })
-            dispatch(toggleCreateUserModal())
-
+            )
+            dispatch(toggleCreateAllRoleModal())
         }
 
     };
@@ -87,6 +91,10 @@ function CreateUserModal() {
                     />
                 </label>
                 <label>
+                    Organization:
+                    <input type="text" name='organization' value={formData.organization} onChange={handleChange} required />
+                </label>
+                <label>
                     Password:
                     <input
                         type="password"
@@ -123,4 +131,4 @@ function CreateUserModal() {
     )
 }
 
-export default CreateUserModal
+export default CreateAllRoleModal

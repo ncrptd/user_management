@@ -3,8 +3,8 @@ import { createUser } from '../../../features/users/usersSlice';
 import { useDispatch } from 'react-redux';
 import './CreateTenantModal.css'
 import { toggleCreateTenantModal } from '../../../features/modals/modalsSlice';
-import toast from 'react-hot-toast';
-const roles = ['tenant', 'tenant-admin'];
+import { getLoggedUser } from '../../../utils/getLoggedUser';
+const roles = ['USER', 'TENANT_ADMIN'];
 
 
 function CreateTenantModal() {
@@ -12,14 +12,13 @@ function CreateTenantModal() {
         firstName: '',
         lastName: '',
         email: '',
-        organization: '',
         password: '',
         confirmPassword: '',
-
         role: roles[0],
     });
 
     const [passwordError, setPasswordError] = useState(false);
+    const loggedInUser = getLoggedUser();
 
 
     const dispatch = useDispatch();
@@ -38,15 +37,9 @@ function CreateTenantModal() {
         if (formData.password !== formData.confirmPassword) {
             setPasswordError(true)
         } else {
-            // await dispatch(CreateTenant(userDetails));
-            // notify('Successfully Created User')
-            toast.promise(dispatch(createUser(formData)), {
-                loading: 'Creating User',
-                success: 'Successfully Created User',
-                error: 'Error Creating User',
-            })
+            const userDetails = { ...formData, organization: loggedInUser.organization }
+            dispatch(createUser(userDetails))
             dispatch(toggleCreateTenantModal())
-
         }
 
     };
@@ -83,10 +76,6 @@ function CreateTenantModal() {
                         onChange={handleChange}
                         required
                     />
-                </label>
-                <label>
-                    Organization:
-                    <input type="text" name='organization' value={formData.organization} onChange={handleChange} required />
                 </label>
                 <label>
                     Password:
