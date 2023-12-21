@@ -1,88 +1,75 @@
-import { useState } from 'react';
-import Papa from 'papaparse';
-import { read, utils } from 'xlsx';
+import { useCallback, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { FaUpload } from "react-icons/fa";
+import * as api from '../../api/index';
+import toast from "react-hot-toast";
+import ProgressBar from "@ramonak/react-progress-bar";
 import './FileUpload.css';
 
 const FileUpload = () => {
-    const [file, setFile] = useState(null);
-    const [errorMessage, setErrorMessage] = useState(null);
+    const [uploadedFileName, setUploadedFileName] = useState('');
+    const [fileUploadProgress, setFileUploadProgress] = useState(null);
 
-    const handleFileChange = (event) => {
-        const selectedFile = event.target.files[0];
-        setFile(selectedFile);
-        setErrorMessage(null);
-    };
-    const handleUpload = async () => {
-        if (file) {
-            try {
-                const data = await readFile(file);
-                const fileExtension = file.name.split('.').pop().toLowerCase();
+    const [error, setError] = useState(null);
 
-                if (fileExtension === 'csv') {
-                    const csvResult = Papa.parse(data, { header: true, skipEmptyLines: true, });
+    const onDrop = useCallback(async (acceptedFiles) => {
+        try {
+            const file = acceptedFiles[0];
+            const formData = new FormData()
 
-                    if (csvResult.errors.length === 0) {
-                        console.log('Parsed CSV Data:', csvResult.data);
-                        // Process and send the data to the backend
-                        // ...
 
-                        return;
-                    } else {
-                        // Handle CSV parsing errors
-                        const error = csvResult.errors[0];
-                        console.error('CSV Parsing Error:', error);
-                        setErrorMessage(`Error parsing CSV: ${error.message}`);
-                    }
-                } else if (fileExtension === 'xlsx' || fileExtension === 'xls') {
-                    const workbook = read(data, { type: 'binary' });
+            setError(null);
 
-                    if (workbook.SheetNames.length > 0) {
-                        const sheetName = workbook.SheetNames[0];
-                        const excelData = utils.sheet_to_json(workbook.Sheets[sheetName]);
-
-                        console.log('Parsed Excel Data:', excelData);
-                        // Process and send the data to the backend
-                        // ...
-
-                        return;
-                    } else {
-                        // Handle Excel parsing errors
-                        setErrorMessage('Error parsing Excel file.');
-                        console.error('Error parsing Excel file.');
-                    }
-                } else {
-                    // If neither CSV nor Excel, handle the error
-                    setErrorMessage('Unsupported file format. Please upload a CSV or Excel file.');
-                    console.error('Unsupported file format');
-                }
-            } catch (error) {
-                console.error('Error reading file:', error);
-                setErrorMessage('Error reading file. Please try again.');
+            if (file.path.endsWith('.xls') || file.path.endsWith('.xlsx') || file.path.endsWith('.csv')) {
+                formData.append('file', acceptedFiles[0]);
+                await api.upload(formData, setFileUploadProgress);
+                console.log('p', fileUploadProgress)
+                toast.success(`File Uploaded Successfully`)
+                setUploadedFileName(file.path);
+            } else {
+                setError('Unsupported file type');
             }
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            toast.error(`Error uploading file`)
+            setError('Error uploading file');
         }
-    };
+    }, [fileUploadProgress]);
 
 
-    const readFile = (file) => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = (e) => resolve(e.target.result);
-            reader.onerror = (error) => reject(error);
-            reader.readAsBinaryString(file);
-        });
-    };
+    const {
+        getRootProps,
+        getInputProps,
+        isDragActive,
+        isDragAccept,
+        isDragReject,
+    } = useDropzone({
+        onDrop,
+    });
 
     return (
-        <div className="file-upload-container">
-            <label htmlFor="file-input" className="file-upload-label">
-                Choose a file
-            </label>
-            <input type="file" id="file-input" onChange={handleFileChange} />
-            {file && <p className="file-name">Selected File: {file.name}</p>}
-            {errorMessage && <p className="error-message">{errorMessage}</p>}
-            <button className="upload-button" onClick={handleUpload}>
-                Upload
-            </button>
+        <div
+            {...getRootProps()}
+            className={`dropzone ${isDragActive ? 'active' : ''} ${isDragAccept ? 'accept' : ''} ${isDragReject ? 'reject' : ''}`}
+        >
+            <input {...getInputProps()} />
+            {isDragActive ? (
+                <p>Drop the files here...</p>
+            ) : (
+                <div className='upload-elements'>
+                    <FaUpload className='upload-icon' />
+                    <p className='upload-successful'>
+                        {uploadedFileName
+                            ? `File uploaded: ${uploadedFileName}`
+                            : "Drag'n drop csv or excel files here, or click to select files"}
+                    </p>
+                    <p className='unsupported-error-msg'>{error}</p>
+                    <div className='progress-bar'>
+                        {fileUploadProgress && <ProgressBar completed={fileUploadProgress} />}
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 };

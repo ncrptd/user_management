@@ -23,4 +23,14 @@ export const getTenants = () => API.get('/tenants');
 export const createUser = (formData) => API.post('/users', formData);
 export const removeUser = (userId) => API.delete(`/users/${userId}`);
 export const passwordReset = (userId, newPassword) => API.post(`/users/${userId}`, { newPassword });
-export const manageRoles = (userId, newRole) => API.post(`/users/manage-roles/${userId}`, { newRole })
+export const manageRoles = (userId, newRole) => API.post(`/users/manage-roles/${userId}`, { newRole });
+
+export const upload = (formData, setFileUploadProgress) => API.post("/upload", formData, {
+    onUploadProgress: (progressEvent) => {
+        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        console.log(`${percentCompleted}% uploaded`);
+        setFileUploadProgress(percentCompleted);
+    }
+});
+
+

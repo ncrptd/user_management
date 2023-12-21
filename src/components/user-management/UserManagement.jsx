@@ -1,4 +1,3 @@
-// UserManagement.js
 import { useNavigate } from 'react-router-dom';
 import './UserManagement.css';
 

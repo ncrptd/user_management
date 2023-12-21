@@ -10,7 +10,9 @@ const navigationItems = [
     { path: '/', label: 'Home', roles: ['ROOT_ADMIN', 'TENANT_ADMIN', 'TENANT', 'USER'] },
     { path: '/tenants', label: 'Tenants', roles: ['ROOT_ADMIN'] },
     { path: '/users', label: 'Users', roles: ['TENANT_ADMIN', 'ROOT_ADMIN'] },
-    { path: '/upload', label: 'Upload', roles: ['TENANT_ADMIN', 'ROOT_ADMIN'] },
+    { path: '/upload', label: 'Upload', roles: ['USER'] },
+    { path: '/configuration', label: 'Config', roles: ['USER'] },
+
 ];
 
 function Sidebar() {

@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import './index.css'
+import './index.css';
+
 import {
   createBrowserRouter,
   RouterProvider,
@@ -8,8 +9,6 @@ import {
 import Login from './pages/login/Login.jsx';
 import RootLayout from './rootLayout/RootLayout.jsx';
 import UserDetails from './pages/user-details/UserDetails.jsx';
-import EditUserProfile from './pages/edit-user-profile/EditUserProfile.jsx';
-import ResetPasswordForm from './pages/reset-password/ResetPasswordForm.jsx';
 import Tenants from './pages/Tenants.jsx';
 import Users from './pages/Users.jsx';
 import { GoogleOAuthProvider } from '@react-oauth/google';
@@ -18,6 +17,7 @@ import store from './app/store.js';
 import RequiresAuth from './auth/RequiresAuth.jsx';
 import Home from './pages/home/Home.jsx';
 import Upload from './pages/upload/Upload.jsx';
+import Configuration from './pages/configuration/Configuration.jsx';
 
 const router = createBrowserRouter([
   {
@@ -33,14 +33,6 @@ const router = createBrowserRouter([
       {
         path: 'user-details/:id',
         element: <UserDetails />
-      },
-      {
-        path: 'edit-user-profile',
-        element: <EditUserProfile />
-      },
-      {
-        path: 'reset-password',
-        element: <ResetPasswordForm />
       }
       , {
         path: 'tenants',
@@ -54,6 +46,10 @@ const router = createBrowserRouter([
       {
         path: 'upload',
         element: <Upload />
+      },
+      {
+        path: 'configuration',
+        element: <Configuration />
       }
     ]
   },
