@@ -1,5 +1,9 @@
 .config-container {
-	padding: 20px;
+	padding: 50px;
+}
+.config-container button {
+	padding: 10px;
+	margin: 5px;
 }
 .modal {
 	display: flex;
@@ -18,16 +22,19 @@
 	padding: 20px;
 	border-radius: 5px;
 	text-align: center;
+	display: flex;
+	gap: 20px;
+	text-align: left;
 }
 
 .close {
-	position: absolute;
-	top: 10px;
-	right: 10px;
 	cursor: pointer;
+	color: red;
+	font-size: 2rem;
+	align-self: flex-end;
 }
 
-.add-modal-button {
+.config-container .create-sheet-button {
 	margin: 20px auto;
 }
 
@@ -76,7 +83,7 @@
 .data-table {
 	width: 100%;
 	border-collapse: collapse;
-	margin-bottom: 20px;
+	margin: 30px 0;
 }
 
 .data-table th,

@@ -34,3 +34,4 @@ export const upload = (formData, setFileUploadProgress) => API.post("/upload", f
 });
 
 
+export const saveTemplate = (data) => API.post('/save-template', data)
