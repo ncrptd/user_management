@@ -3,14 +3,15 @@ import { useDispatch, useSelector } from "react-redux";
 import CreateAllRoleModal from "../modals/create-all-role-modal/CreateUserAllRoleModal";
 import { RxCross2 } from "react-icons/rx";
 import './Overlays.css'
-import { toggleCreateTenantModal, toggleCreateAllRoleModal, toggleDeleteUserModal, toggleResetPasswordModal } from "../../features/modals/modalsSlice";
+import { toggleCreateTenantModal, toggleCreateAllRoleModal, toggleDeleteUserModal, toggleResetPasswordModal, toggleUploadModal } from "../../features/modals/modalsSlice";
 import CreateTenantModal from "../modals/create-tenant-modal/CreateTenantModal";
 import DeleteUserModal from "../modals/deleteModal/DeleteUserModal";
 import ResetPasswordModal from "../modals/resetPasswordModal/ResetPasswordModal";
+import UploadModal from "../modals/uploadModal/UploadModal";
 const mountElement = document.getElementById('overlays');
 
 function Overlays() {
-    const { showCreateUserModal, showCreateTenantModal, deleteUser, resetPasswordUser } = useSelector((state) => state.modals);
+    const { showCreateUserModal, showCreateTenantModal, deleteUser, resetPasswordUser, isUploadModalOpen } = useSelector((state) => state.modals);
     const dispatch = useDispatch();
 
     const handleUserModal = (e) => {
@@ -30,6 +31,9 @@ function Overlays() {
     const handleResetPasswordModal = (e) => {
         e.stopPropagation();
         dispatch(toggleResetPasswordModal())
+    }
+    const handleUploadModalClose = () => {
+        dispatch(toggleUploadModal())
     }
     return (
         createPortal(
@@ -62,6 +66,12 @@ function Overlays() {
                     <div className="modal-content">
                         <RxCross2 onClick={handleResetPasswordModal} />
                         <ResetPasswordModal />
+                    </div>
+                </div>}
+                {isUploadModalOpen && <div className="modal">
+                    <div className="modal-content">
+                        <RxCross2 onClick={handleUploadModalClose} />
+                        <UploadModal />
                     </div>
                 </div>}
 

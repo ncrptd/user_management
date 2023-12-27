@@ -25,7 +25,7 @@ export const removeUser = (userId) => API.delete(`/users/${userId}`);
 export const passwordReset = (userId, newPassword) => API.post(`/users/${userId}`, { newPassword });
 export const manageRoles = (userId, newRole) => API.post(`/users/manage-roles/${userId}`, { newRole });
 
-export const upload = (formData, setFileUploadProgress) => API.post("/upload", formData, {
+export const upload = (folderName, formData, setFileUploadProgress) => API.post(`/upload/${folderName}`, formData, {
     onUploadProgress: (progressEvent) => {
         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
         console.log(`${percentCompleted}% uploaded`);
@@ -34,4 +34,7 @@ export const upload = (formData, setFileUploadProgress) => API.post("/upload", f
 });
 
 
-export const saveTemplate = (data) => API.post('/save-template', data)
+export const saveTemplate = (data) => API.post('/config/save-template', data);
+
+export const getUploadedFiles = () => API.get('/upload');
+export const getFolders = () => API.get('/upload/folders');

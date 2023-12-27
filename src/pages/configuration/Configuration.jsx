@@ -3,7 +3,6 @@ import { writeFileXLSX, utils } from "xlsx";
 import './Configuration.css'
 import toast from "react-hot-toast";
 import * as api from '../../api/index';
-import { getLoggedUser } from "../../utils/getLoggedUser";
 function Configuration() {
     const [modalVisible, setModalVisible] = useState(false);
     const [columnInputs, setColumnInputs] = useState([]);
@@ -15,6 +14,8 @@ function Configuration() {
     });
     const [columns, setColumns] = useState([]);
 
+    const [templateNameInput, setTemplateNameInput] = useState("");
+    const [saveModalVisible, setSaveModalVisible] = useState(false);
 
     const excelDataTypes = ["Text", "Number", "Date", "Boolean"];
     const openModal = () => {
@@ -35,9 +36,7 @@ function Configuration() {
         const { name, dataType, defaultValue, unitOfMeasure } = newColumn;
 
         if (name.trim() !== "") {
-            // Check if column with the same name already exists
             if (!columnInputs.includes(name)) {
-                // Add new column
                 setColumnInputs([...columnInputs, name]);
                 setColumns((prevColumns) => [
                     ...prevColumns,
@@ -62,21 +61,16 @@ function Configuration() {
         const ws = utils.json_to_sheet(columnNamesOnly);
 
         columnInputs.forEach((columnName, index) => {
-            // Get the cell address for the first row and current column
             const cellAddress = utils.encode_cell({ r: 0, c: index });
 
-            // Initialize the cell if it is undefined
             if (!ws[cellAddress]) {
                 ws[cellAddress] = { t: 's', v: columnName, r: utils.encode_cell({ c: index, r: 0 }) };
             }
 
-            // Create comments for the current column name
             const commentText = `Data Type: ${columns[index].dataType}\nDefault Value: ${columns[index].defaultValue}\nUnit Of Measure: ${columns[index].unitOfMeasure}`;
 
-            // Initialize the comments array if it is undefined
             if (!ws[cellAddress].c) ws[cellAddress].c = [];
 
-            // Add a comment to the cell
             ws[cellAddress].c.push({ a: "Comment Author", t: commentText });
         });
 
@@ -89,21 +83,19 @@ function Configuration() {
 
     const handleTemplateSave = async (templateName) => {
         try {
-            const { id } = getLoggedUser();
-
             if (columns.length > 0) {
                 const templateData = {
-                    templateName,
+                    templateName: templateName,
                     template: columns,
-                    userId: id
                 };
 
                 console.log('Sending template data:', templateData);
 
                 const res = await api.saveTemplate(templateData);
 
-                if (res.status === 201) {
-                    toast.success('Template saved successfully');
+                if (res.status === 201 || res.status === 200) {
+                    console.log(res.data.message)
+                    toast.success(res.data.message);
                 } else {
                     toast.error('Error saving template. Please check the console for details.');
                     console.error('Error response:', res);
@@ -206,15 +198,42 @@ function Configuration() {
                 </div>
             )}
 
-            {columns.length > 0 && <>
-                <button onClick={handleDownloadTemplate}>
-                    Download Template
-                </button>
-                {/* <button onClick={handleTemplateSave}>
-                    Save Template
-                </button> */}
+            {columns.length > 0 && (
+                <>
+                    <button onClick={handleDownloadTemplate}>Download Template</button>
+                    <button onClick={() => setSaveModalVisible(true)}>Save Template</button>
+                </>
+            )}
 
-            </>}
+            {/* Save Template Modal */}
+            {saveModalVisible && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <span className="close" onClick={() => setSaveModalVisible(false)}>
+                            &times;
+                        </span>
+                        <h2>Save Template</h2>
+                        <form>
+                            <label>Template Name:</label>
+                            <input
+                                type="text"
+                                value={templateNameInput}
+                                onChange={(e) => setTemplateNameInput(e.target.value)}
+                            />
+
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    handleTemplateSave(templateNameInput);
+                                    setSaveModalVisible(false);
+                                }}
+                            >
+                                Save
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
 
         </div>
     );

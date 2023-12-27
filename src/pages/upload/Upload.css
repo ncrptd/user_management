@@ -1,0 +1,12 @@
+#upload-page {
+	padding: 10px;
+}
+
+#upload-page button {
+	padding: 10px;
+}
+
+#upload-page .button-container {
+	display: flex;
+	justify-content: flex-end;
+}
