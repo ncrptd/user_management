@@ -10,7 +10,7 @@ const getFileTypeLabel = (fileType) => {
     return fileTypeMap[fileType] || 'Unknown Type';
 };
 
-const UploadedFiles = ({ uploadedFiles }) => {
+const UploadedFiles = ({ uploadedFiles, template }) => {
     return (
         <div className="uploaded-files-container">
             <h2>Uploaded Files</h2>
@@ -23,13 +23,13 @@ const UploadedFiles = ({ uploadedFiles }) => {
                         <th>Organization</th>
                         <th>Folder Name</th>
                         <th>Upload Time</th>
-
+                        <th></th>
                         {/* Add more columns as needed */}
                     </tr>
                 </thead>
                 <tbody>
                     {uploadedFiles &&
-                        uploadedFiles.map((file) => (
+                        uploadedFiles?.map((file) => (
                             <tr key={file.id}>
                                 <td>{file.fileName}</td>
                                 <td>{file.fileSize} bytes</td>
@@ -37,6 +37,23 @@ const UploadedFiles = ({ uploadedFiles }) => {
                                 <td>{file.organization || 'N/A'}</td>
                                 <td>{file.folderName}</td>
                                 <td>{new Date(file.uploadTimestamp).toLocaleString()}</td>
+                                {template && (
+                                    <td>
+                                        <button>
+                                            <a
+                                                href={file?.filePath}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className='download'
+
+                                            >
+                                                Download
+                                            </a>
+                                        </button>
+                                    </td>
+                                )}
+
+
                             </tr>
                         ))}
                 </tbody>

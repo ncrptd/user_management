@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import Header from "../components/header/Header";
 import Sidebar from "../components/sidebar/Sidebar";
 import App from "../App";
+import Footer from "../components/footer/Footer";
 const data = [
     {
         title: 'Home',
@@ -30,6 +31,7 @@ function RootLayout() {
                     <Outlet />
                 </App>
             </main>
+            <Footer />
         </div>
     );
 }

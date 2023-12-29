@@ -7,6 +7,7 @@ import ProgressBar from '@ramonak/react-progress-bar';
 import './FileUpload.css';
 import { useDispatch } from 'react-redux';
 import { updateFiles } from '../../features/upload/uploadSlice';
+import { toggleUploadModal } from '../../features/modals/modalsSlice';
 
 const FileUpload = () => {
     const [uploadedFileName, setUploadedFileName] = useState('');
@@ -34,13 +35,14 @@ const FileUpload = () => {
 
                 const formData = new FormData();
                 formData.append('file', file);
-                formData.append('folder', selectedFolder);
-
+                // formData.append('folder', selectedFolder);
+                console.log('upload', formData)
                 const result = await api.upload(selectedFolder, formData, setFileUploadProgress);
-                console.log(result)
                 toast.success(`File Uploaded Successfully`);
+
                 setUploadedFileName(file.path);
                 dispatch(updateFiles(result.data.fileUpload));
+                dispatch(toggleUploadModal())
 
             } else {
                 setError('Unsupported file type');
@@ -143,7 +145,6 @@ const FileUpload = () => {
                             : 'Drag\'n drop csv or excel files here, or click to select files'}
                     </p>
                     <div className='folder-dropdown'>
-                        <label htmlFor='folderSelect'>Select Folder</label>
                         <select
                             id='folderSelect'
                             value={selectedFolder}

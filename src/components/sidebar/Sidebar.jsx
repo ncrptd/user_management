@@ -11,7 +11,7 @@ const navigationItems = [
     { path: '/tenants', label: 'Tenants', roles: ['ROOT_ADMIN'] },
     { path: '/users', label: 'Users', roles: ['TENANT_ADMIN', 'ROOT_ADMIN'] },
     { path: '/upload', label: 'Upload', roles: ['USER',] },
-    { path: '/configuration', label: 'Config', roles: ['TENANT_ADMIN', 'ROOT_ADMIN'] },
+    { path: '/configuration', label: 'Config', roles: ['USER', 'TENANT_ADMIN', 'ROOT_ADMIN'] },
 
 ];
 

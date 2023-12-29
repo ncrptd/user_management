@@ -1,0 +1,11 @@
+.uploaded-files-container h2 {
+	text-align: center;
+	color: #3490dc;
+}
+.uploaded-files-container button {
+	background-color: green;
+}
+.uploaded-files-container .download {
+	color: white;
+	text-decoration: none;
+}

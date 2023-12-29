@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { writeFileXLSX, utils } from "xlsx";
+import * as XLSX from 'xlsx';
 import './Configuration.css'
 import toast from "react-hot-toast";
 import * as api from '../../api/index';
+import UploadedFiles from "../../components/uploadedFiles/UploadedFiles";
+
 function Configuration() {
     const [modalVisible, setModalVisible] = useState(false);
     const [columnInputs, setColumnInputs] = useState([]);
@@ -16,6 +19,9 @@ function Configuration() {
 
     const [templateNameInput, setTemplateNameInput] = useState("");
     const [saveModalVisible, setSaveModalVisible] = useState(false);
+    const [setFileUploadProgress] = useState(null);
+
+    const [templates, setTemplates] = useState([]);
 
     const excelDataTypes = ["Text", "Number", "Date", "Boolean"];
     const openModal = () => {
@@ -57,7 +63,6 @@ function Configuration() {
 
     const handleDownloadTemplate = () => {
         const columnNamesOnly = columnInputs.map((columnName) => ({ [columnName]: '' }));
-        console.log('c', columnNamesOnly)
         const ws = utils.json_to_sheet(columnNamesOnly);
 
         columnInputs.forEach((columnName, index) => {
@@ -76,43 +81,67 @@ function Configuration() {
 
         const wb = utils.book_new();
         utils.book_append_sheet(wb, ws, "Template");
-
+        console.log(wb)
         writeFileXLSX(wb, `ExcelTemplate-${Date.now()}.xlsx`, { bookType: "xlsx", bookSST: false, type: "blob" });
     };
 
-
     const handleTemplateSave = async (templateName) => {
-        try {
-            if (columns.length > 0) {
-                const templateData = {
-                    templateName: templateName,
-                    template: columns,
-                };
+        const columnNamesOnly = columnInputs.map((columnName) => ({ [columnName]: '' }));
+        const ws = XLSX.utils.json_to_sheet(columnNamesOnly);
+        columnInputs.forEach((columnName, index) => {
+            const cellAddress = utils.encode_cell({ r: 0, c: index });
 
-                console.log('Sending template data:', templateData);
-
-                const res = await api.saveTemplate(templateData);
-
-                if (res.status === 201 || res.status === 200) {
-                    console.log(res.data.message)
-                    toast.success(res.data.message);
-                } else {
-                    toast.error('Error saving template. Please check the console for details.');
-                    console.error('Error response:', res);
-                }
-            } else {
-                toast.warn('No columns to save.');
+            if (!ws[cellAddress]) {
+                ws[cellAddress] = { t: 's', v: columnName, r: utils.encode_cell({ c: index, r: 0 }) };
             }
+
+            const commentText = `Data Type: ${columns[index].dataType}\nDefault Value: ${columns[index].defaultValue}\nUnit Of Measure: ${columns[index].unitOfMeasure}`;
+
+            if (!ws[cellAddress].c) ws[cellAddress].c = [];
+
+            ws[cellAddress].c.push({ a: "Comment Author", t: commentText });
+        });
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, ws, 'Template');
+        const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+        const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+        const formData = new FormData();
+        formData.append('file', blob, `${templateName}.xlsx`); // Set filename using templateName parameter
+
+        try {
+            const res = await api.upload('Templates', formData, setFileUploadProgress);
+            console.log('fi', res.data.fileUpload)
+            setTemplates((prev) => [...prev, res.data.fileUpload]);
+            toast.success(`File Uploaded Successfully`);
         } catch (error) {
-            console.error('Unexpected error:', error);
-            toast.error('Error While Saving Template');
+            console.error('Error uploading file:', error);
+            toast.error('File Upload Failed');
         }
     };
 
+    useEffect(() => {
+        const fetchTemplates = async () => {
+            try {
+                const response = await api.getTemplates();
+                console.log(response)
+                setTemplates(response.data.templates); // Assuming the API response contains the data field
+            } catch (error) {
+                console.error('Error fetching templates:', error);
+            }
+        };
 
+        fetchTemplates();
+    }, []);
+
+    console.log(columnInputs)
     return (
         <div className="config-container">
-            <h1>Configuration</h1>
+            {templates.length > 0 && <div className="uploaded-templates">
+                <UploadedFiles uploadedFiles={templates} template />
+
+            </div>}
+            <h1>Create Template</h1>
             <table className="data-table">
                 <thead>
                     <tr>
@@ -127,7 +156,7 @@ function Configuration() {
                     {columns.map((row, rowIndex) => (
                         <tr key={rowIndex}>
                             {columnInputs.map((columnName, colIndex) => (
-                                <td key={colIndex}>{row[columnName]}</td>
+                                <td key={colIndex}></td>
                             ))}
                         </tr>
                     ))}

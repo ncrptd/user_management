@@ -1,6 +1,5 @@
-
 import FileUpload from '../../fileUpload/FileUpload';
-
+import './UploadModal.css'
 const UploadModal = () => {
 
 
