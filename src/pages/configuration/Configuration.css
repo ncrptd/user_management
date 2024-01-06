@@ -35,7 +35,7 @@
 }
 
 .config-container .create-sheet-button {
-	margin: 20px auto;
+	text-align: right;
 }
 
 .configure-columns {
@@ -128,4 +128,58 @@
 }
 .uploaded-templates {
 	margin-bottom: 20px;
+}
+
+.container {
+	display: flex;
+	justify-content: space-around;
+	margin: 20px;
+}
+
+.template-category {
+	border: 1px solid #ddd;
+	padding: 10px;
+	margin: 10px;
+	border-radius: 8px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.column {
+	list-style: none;
+	margin-bottom: 10px;
+	padding: 10px;
+	background-color: #f9f9f9;
+	border-radius: 4px;
+	box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+}
+
+.column strong {
+	display: block;
+	font-size: 1.2em;
+	margin-bottom: 5px;
+}
+
+.column p {
+	margin: 5px 0;
+	font-size: 0.9em;
+}
+
+span {
+	font-weight: bold;
+	margin-right: 5px;
+}
+
+.category-Environment {
+	background-color: #dff0d8; /* Example background color for the 'Environment' category */
+}
+
+.category-Social {
+	background-color: #d9edf7; /* Example background color for the 'Social' category */
+}
+
+.category-Economic {
+	background-color: #fcf8e3; /* Example background color for the 'Economic' category */
+}
+.category-Governance {
+	background-color: #ebccd1; /* Example background color for the 'Governance' category */
 }

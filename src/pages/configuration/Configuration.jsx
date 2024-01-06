@@ -4,26 +4,30 @@ import * as XLSX from 'xlsx';
 import './Configuration.css'
 import toast from "react-hot-toast";
 import * as api from '../../api/index';
-import UploadedFiles from "../../components/uploadedFiles/UploadedFiles";
+import Templates from "../../components/templates/Templates";
+// import UploadedFiles from "../../components/uploadedFiles/UploadedFiles";
 
 function Configuration() {
     const [modalVisible, setModalVisible] = useState(false);
-    const [columnInputs, setColumnInputs] = useState([]);
     const [newColumn, setNewColumn] = useState({
-        name: "",
+        category: "",
+        columnName: "",
         dataType: "",
         defaultValue: "",
         unitOfMeasure: "",
     });
-    const [columns, setColumns] = useState([]);
 
     const [templateNameInput, setTemplateNameInput] = useState("");
     const [saveModalVisible, setSaveModalVisible] = useState(false);
     const [setFileUploadProgress] = useState(null);
 
     const [templates, setTemplates] = useState([]);
+    // const [adminTemplate, setAdminTemplate] = useState([]);
 
     const excelDataTypes = ["Text", "Number", "Date", "Boolean"];
+    const categories = ['Environment', 'Social', 'Governance', 'Economic'];
+
+    const [templateData, setTemplateData] = useState([])
     const openModal = () => {
         setModalVisible(true);
     };
@@ -31,87 +35,99 @@ function Configuration() {
     const closeModal = () => {
         setModalVisible(false);
         setNewColumn({
-            name: "",
+            columnName: "",
             dataType: "",
             defaultValue: "",
             unitOfMeasure: "",
         });
     };
 
-    const addColumnInputs = () => {
-        const { name, dataType, defaultValue, unitOfMeasure } = newColumn;
+    const handleTemplateData = () => {
 
-        if (name.trim() !== "") {
-            if (!columnInputs.includes(name)) {
-                setColumnInputs([...columnInputs, name]);
-                setColumns((prevColumns) => [
-                    ...prevColumns,
-                    { name, dataType, defaultValue, unitOfMeasure },
-                ]);
-                setNewColumn({
-                    name: "",
-                    dataType: "",
-                    defaultValue: "",
-                    unitOfMeasure: "",
-                });
-
-            } else {
-                toast.error("Column with the same name already exists!");
-            }
+        if (!newColumn.category.trim() || !newColumn.columnName.trim()) {
+            // Display an error message or take appropriate action
+            alert('Field is empty!');
+            return;
         }
-    };
 
-    const handleDownloadTemplate = () => {
-        const columnNamesOnly = columnInputs.map((columnName) => ({ [columnName]: '' }));
-        const ws = utils.json_to_sheet(columnNamesOnly);
+        const existingCategoryIndex = templateData.findIndex((category) => category.category === newColumn.category);
 
-        columnInputs.forEach((columnName, index) => {
-            const cellAddress = utils.encode_cell({ r: 0, c: index });
+        if (existingCategoryIndex !== -1) {
+            // Category already exists, add new columns to its columns array
+            const updatedData = [...templateData];
+            updatedData[existingCategoryIndex].columns.push({
+                columnName: newColumn.columnName,
+                dataType: newColumn.dataType,
+                defaultValue: newColumn.defaultValue,
+                unitOfMeasure: newColumn.unitOfMeasure,
+            });
+            setTemplateData([...updatedData]);
+        } else {
+            // Category doesn't exist, add a new category object
+            setTemplateData((prevData) => [
+                ...prevData,
+                {
+                    category: newColumn.category,
+                    columns: [
+                        {
+                            columnName: newColumn.columnName,
+                            dataType: newColumn.dataType,
+                            defaultValue: newColumn.defaultValue,
+                            unitOfMeasure: newColumn.unitOfMeasure,
+                        },
+                    ],
+                },
+            ]);
+        }
 
-            if (!ws[cellAddress]) {
-                ws[cellAddress] = { t: 's', v: columnName, r: utils.encode_cell({ c: index, r: 0 }) };
-            }
-
-            const commentText = `Data Type: ${columns[index].dataType}\nDefault Value: ${columns[index].defaultValue}\nUnit Of Measure: ${columns[index].unitOfMeasure}`;
-
-            if (!ws[cellAddress].c) ws[cellAddress].c = [];
-
-            ws[cellAddress].c.push({ a: "Comment Author", t: commentText });
+        // Reset the newColumn state
+        setNewColumn({
+            category: '',
+            columnName: '',
+            dataType: '',
+            defaultValue: '',
+            unitOfMeasure: '',
         });
 
-        const wb = utils.book_new();
-        utils.book_append_sheet(wb, ws, "Template");
-        console.log(wb)
-        writeFileXLSX(wb, `ExcelTemplate-${Date.now()}.xlsx`, { bookType: "xlsx", bookSST: false, type: "blob" });
+
     };
+
+
 
     const handleTemplateSave = async (templateName) => {
-        const columnNamesOnly = columnInputs.map((columnName) => ({ [columnName]: '' }));
-        const ws = XLSX.utils.json_to_sheet(columnNamesOnly);
-        columnInputs.forEach((columnName, index) => {
-            const cellAddress = utils.encode_cell({ r: 0, c: index });
 
-            if (!ws[cellAddress]) {
-                ws[cellAddress] = { t: 's', v: columnName, r: utils.encode_cell({ c: index, r: 0 }) };
-            }
+        const wb = utils.book_new();
 
-            const commentText = `Data Type: ${columns[index].dataType}\nDefault Value: ${columns[index].defaultValue}\nUnit Of Measure: ${columns[index].unitOfMeasure}`;
+        templateData.forEach((sheet) => {
+            const wsData = sheet.columns.map((column) => ({ [column.columnName]: '' }));
+            const ws = utils.json_to_sheet(wsData);
 
-            if (!ws[cellAddress].c) ws[cellAddress].c = [];
+            sheet.columns.forEach((item, index) => {
+                const cellAddress = utils.encode_cell({ r: 0, c: index });
 
-            ws[cellAddress].c.push({ a: "Comment Author", t: commentText });
+                if (!ws[cellAddress]) {
+                    ws[cellAddress] = { t: 's', v: item.columnName, r: utils.encode_cell({ c: index, r: 0 }) };
+                }
+
+                const commentText = `Data Type: ${item.dataType}\nDefault Value: ${item.defaultValue
+                    }\nUnit Of Measure: ${item.unitOfMeasure}`;
+
+                if (!ws[cellAddress].c) ws[cellAddress].c = [];
+
+                ws[cellAddress].c.push({ a: "Comment Author", t: commentText });
+            });
+
+            utils.book_append_sheet(wb, ws, sheet.category);
         });
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, ws, 'Template');
-        const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+        const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
         const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 
         const formData = new FormData();
         formData.append('file', blob, `${templateName}.xlsx`); // Set filename using templateName parameter
 
+
         try {
             const res = await api.upload('Templates', formData, setFileUploadProgress);
-            console.log('fi', res.data.fileUpload)
             setTemplates((prev) => [...prev, res.data.fileUpload]);
             toast.success(`File Uploaded Successfully`);
         } catch (error) {
@@ -124,8 +140,10 @@ function Configuration() {
         const fetchTemplates = async () => {
             try {
                 const response = await api.getTemplates();
-                console.log(response)
-                setTemplates(response.data.templates); // Assuming the API response contains the data field
+                console.log('es', response)
+                setTemplates(response.data.templates);
+                // setAdminTemplate(response
+                //     .data.adminTemplate)
             } catch (error) {
                 console.error('Error fetching templates:', error);
             }
@@ -134,36 +152,78 @@ function Configuration() {
         fetchTemplates();
     }, []);
 
-    console.log(columnInputs)
+
+
+    const handleDownloadTemplate = () => {
+        const wb = utils.book_new();
+
+        templateData.forEach((sheet) => {
+            const wsData = sheet.columns.map((column) => ({ [column.columnName]: '' }));
+            const ws = utils.json_to_sheet(wsData);
+
+            sheet.columns.forEach((item, index) => {
+                const cellAddress = utils.encode_cell({ r: 0, c: index });
+
+                if (!ws[cellAddress]) {
+                    ws[cellAddress] = { t: 's', v: item.columnName, r: utils.encode_cell({ c: index, r: 0 }) };
+                }
+
+                const commentText = `Data Type: ${item.dataType}\nDefault Value: ${item.defaultValue
+                    }\nUnit Of Measure: ${item.unitOfMeasure}`;
+
+                if (!ws[cellAddress].c) ws[cellAddress].c = [];
+
+                ws[cellAddress].c.push({ a: "Comment Author", t: commentText });
+            });
+
+            utils.book_append_sheet(wb, ws, sheet.category);
+        });
+
+        writeFileXLSX(wb, `ExcelTemplate - ${Date.now()}.xlsx`, { bookType: "xlsx", bookSST: false, type: "blob" });
+
+    }
     return (
         <div className="config-container">
+            <h1>Configuration</h1>
+            <button className="create-sheet-button" onClick={openModal}>Create Template</button>
+
+            {/* {
+                adminTemplate.length > 0 && <UploadedFiles uploadedFiles={adminTemplate} adminTemplate />
+            } */}
+
             {templates.length > 0 && <div className="uploaded-templates">
-                <UploadedFiles uploadedFiles={templates} template />
+                <Templates templates={templates} />
 
             </div>}
-            <h1>Create Template</h1>
-            <table className="data-table">
-                <thead>
-                    <tr>
-                        {columnInputs.map((columnName, index) => (
-                            <th className="column-name" key={index}>
-                                {columnName}
-                            </th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {columns.map((row, rowIndex) => (
-                        <tr key={rowIndex}>
-                            {columnInputs.map((columnName, colIndex) => (
-                                <td key={colIndex}></td>
-                            ))}
+            {templateData.length > 0 && <div className="template-container">
+                <h2>Created Template</h2>
+                <table className="template-table">
+                    <thead>
+                        <tr>
+                            <th>Column Name</th>
+                            <th>Data Type</th>
+                            <th>Default Value</th>
+                            <th>Unit of Measure</th>
+                            <th>Category</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {templateData.map((category) =>
+                            category.columns.map((column, index) => (
+                                <tr key={`${category.category}-${index}`}>
+                                    <td>{column.columnName}</td>
+                                    <td>{column.dataType}</td>
+                                    <td>{column.defaultValue}</td>
+                                    <td>{column.unitOfMeasure}</td>
+                                    <td className={category.category ? `category-${category.category}` : ''}>{category.category}</td>
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
+                </table>
+            </div>}
 
-            <button className="create-sheet-button" onClick={openModal}>Create</button>
+          
 
             {/* Modal */}
             {modalVisible && (
@@ -174,13 +234,29 @@ function Configuration() {
                         </span>
                         <h2>Enter Column Details</h2>
                         <form>
+                            <label>Category:</label>
+
+                            <select
+                                value={newColumn.category}
+                                onChange={(e) =>
+                                    setNewColumn({ ...newColumn, category: e.target.value })
+                                }
+                            >
+                                <option value="">Select Category</option>
+                                {categories.map((type) => (
+                                    <option key={type} value={type}>
+                                        {type}
+                                    </option>
+                                ))}
+                            </select>
                             <label>Column Name:</label>
                             <input
                                 type="text"
-                                value={newColumn.name}
+                                value={newColumn.columnName}
                                 onChange={(e) =>
-                                    setNewColumn({ ...newColumn, name: e.target.value })
+                                    setNewColumn({ ...newColumn, columnName: e.target.value })
                                 }
+                                required
                             />
 
                             <label>Data Type:</label>
@@ -219,7 +295,7 @@ function Configuration() {
                                 }
                             />
 
-                            <button type="button" onClick={addColumnInputs}>
+                            <button type="button" onClick={handleTemplateData}>
                                 Add
                             </button>
                         </form>
@@ -227,13 +303,12 @@ function Configuration() {
                 </div>
             )}
 
-            {columns.length > 0 && (
+            {templateData.length > 0 && (
                 <>
                     <button onClick={handleDownloadTemplate}>Download Template</button>
                     <button onClick={() => setSaveModalVisible(true)}>Save Template</button>
                 </>
             )}
-
             {/* Save Template Modal */}
             {saveModalVisible && (
                 <div className="modal">

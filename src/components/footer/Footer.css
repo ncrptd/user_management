@@ -1,17 +1,23 @@
 /* CSS */
 
+body {
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh; /* Ensure the body takes at least the full height of the viewport */
+}
+
+.main {
+	flex: 1; /* Allow the main content to take up remaining vertical space */
+	display: flex;
+	min-height: calc(100vh - 60px); /* Adjust based on your footer height */
+}
+
 .footer {
-	position: fixed;
-	bottom: 0;
 	width: 100%;
 	padding: 10px 0;
 	text-align: center;
 	background-color: #2d3748;
 	color: white;
-}
-
-.footer-content {
-	display: flex;
-	flex-direction: column;
-	gap: 20px;
 }

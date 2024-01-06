@@ -7,7 +7,7 @@ import ProgressBar from '@ramonak/react-progress-bar';
 import './FileUpload.css';
 import { useDispatch } from 'react-redux';
 import { updateFiles } from '../../features/upload/uploadSlice';
-import { toggleUploadModal } from '../../features/modals/modalsSlice';
+// import { toggleUploadModal } from '../../features/modals/modalsSlice';
 
 const FileUpload = () => {
     const [uploadedFileName, setUploadedFileName] = useState('');
@@ -42,7 +42,6 @@ const FileUpload = () => {
 
                 setUploadedFileName(file.path);
                 dispatch(updateFiles(result.data.fileUpload));
-                dispatch(toggleUploadModal())
 
             } else {
                 setError('Unsupported file type');
@@ -133,18 +132,13 @@ const FileUpload = () => {
             {...getRootProps()}
             className={`dropzone ${isDragActive ? 'active' : ''} ${isDragAccept ? 'accept' : ''} ${isDragReject ? 'reject' : ''} file-upload`}
         >
+
             <input {...getInputProps()} />
             {isDragActive ? (
                 <p>Drop the files here...</p>
             ) : (
                 <div className='upload-elements'>
-                    <FaUpload className='upload-icon' />
-                    <p className='upload-successful'>
-                        {uploadedFileName
-                            ? `File uploaded: ${uploadedFileName}`
-                            : 'Drag\'n drop csv or excel files here, or click to select files'}
-                    </p>
-                    <div className='folder-dropdown'>
+                    <FaUpload className='upload-icon' />      <div className='folder-dropdown'>
                         <select
                             id='folderSelect'
                             value={selectedFolder}
@@ -164,6 +158,12 @@ const FileUpload = () => {
 
                         </select>
                     </div>
+                    <p className='upload-successful'>
+                        {uploadedFileName
+                            ? `File uploaded: ${uploadedFileName}`
+                            : 'Drag\'n drop csv or excel files here, or click to select files'}
+                    </p>
+
                     <p className='unsupported-error-msg'>{error}</p>
                     <div className='progress-bar'>
                         {fileUploadProgress && <ProgressBar completed={fileUploadProgress} />}

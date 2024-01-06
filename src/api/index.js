@@ -34,8 +34,9 @@ export const upload = (folderName, formData, setFileUploadProgress) => API.post(
 });
 
 
-export const saveTemplate = (data) => API.post('/config/save-template', data);
+// export const saveTemplate = (data) => API.post('/config/save-template', data);
 export const getTemplates = () => API.get('/config/templates');
-
+export const uploadGlobalTemplate = (data) => API.post('/config/global-template', data);
 export const getUploadedFiles = () => API.get('/upload');
 export const getFolders = () => API.get('/upload/folders');
+export const getDownloadLink = (data) => API.post('/upload/download-link', data)

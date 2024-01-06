@@ -102,3 +102,7 @@
 .upload-elements .progress-bar {
 	width: 100%;
 }
+
+.folder-dropdown select {
+	cursor: pointer;
+}
