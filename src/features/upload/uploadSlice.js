@@ -40,6 +40,7 @@ const uploadSlice = createSlice({
                 state.status = "success";
                 // Update state with the fetched uploaded files if needed
                 state.uploadedFiles = action.payload;
+
             })
             .addCase(getUploadedFiles.rejected, (state, action) => {
                 state.status = "error";

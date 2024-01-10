@@ -28,7 +28,7 @@ const UploadedFiles = ({ uploadedFiles, adminTemplate }) => {
             console.error(error)
         }
     }
-    console.log('up', uploadedFiles)
+
     return (
         <div className="uploaded-files-container">
 

@@ -6,7 +6,7 @@ const initialState = {
     showEditUserProfile: false,
     deleteUser: null,
     resetPasswordUser: null,
-    isUploadModalOpen: false, // New state for the Upload Modal
+    isUploadModalOpen: false,
 };
 
 const modalsSlice = createSlice({

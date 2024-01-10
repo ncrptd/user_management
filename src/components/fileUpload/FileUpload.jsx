@@ -7,6 +7,7 @@ import ProgressBar from '@ramonak/react-progress-bar';
 import './FileUpload.css';
 import { useDispatch } from 'react-redux';
 import { updateFiles } from '../../features/upload/uploadSlice';
+import { toggleUploadModal } from '../../features/modals/modalsSlice';
 // import { toggleUploadModal } from '../../features/modals/modalsSlice';
 
 const FileUpload = () => {
@@ -53,7 +54,9 @@ const FileUpload = () => {
 
             setUploadedFileName(file.path);
             dispatch(updateFiles(result.data.fileUpload));
-            setIsModalOpen(false)
+            dispatch(toggleUploadModal())
+
+
         } catch (error) {
             setError('Unknown error occurred');
         }
