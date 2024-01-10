@@ -28,7 +28,6 @@ export const manageRoles = (userId, newRole) => API.post(`/users/manage-roles/${
 export const upload = (folderName, formData, setFileUploadProgress) => API.post(`/upload/${folderName}`, formData, {
     onUploadProgress: (progressEvent) => {
         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-        console.log(`${percentCompleted}% uploaded`);
         setFileUploadProgress(percentCompleted);
     }
 });

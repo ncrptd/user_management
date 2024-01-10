@@ -36,8 +36,6 @@ export const getUsers = createAsyncThunk('users/get', async (param, { rejectWith
 export const getTenants = createAsyncThunk('users/get/tenants', async (param, { rejectWithValue }) => {
     try {
         const response = await api.getTenants();
-
-        console.log('te', response.data.tenants)
         return response.data.tenants;
     } catch (error) {
         return rejectWithValue(error.response.data)
@@ -61,8 +59,6 @@ export const deleteUser = createAsyncThunk('users/remove', async (userId, {
 export const passwordReset = createAsyncThunk(
     "users/reset",
     async ({ userId, newPassword }, { rejectWithValue }) => {
-        console.log('res', userId, newPassword)
-
         try {
             await api.passwordReset(userId, newPassword);
             toast.success("Password Reset Successfully");
@@ -78,7 +74,6 @@ export const passwordReset = createAsyncThunk(
 export const manageRoles = createAsyncThunk(
     'users/manageRoles',
     async ({ userId, newRole }, { rejectWithValue }) => {
-        console.log('u', userId, newRole)
         try {
             const response = await api.manageRoles(userId, newRole);
             toast.success('Role updated successfully');
@@ -162,7 +157,6 @@ export const usersSlice = createSlice({
             })
             .addCase(deleteUser.fulfilled, (state, action) => {
                 state.status = 'success';
-                console.log(action)
                 state.allUsers = state.allUsers.filter(user => user.id !== action.payload);
             })
             .addCase(deleteUser.rejected, (state, action) => {

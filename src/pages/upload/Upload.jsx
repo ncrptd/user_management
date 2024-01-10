@@ -20,7 +20,6 @@ function Upload() {
         const fetchTemplates = async () => {
             try {
                 const response = await api.getTemplates();
-                console.log('es', response)
                 setAdminTemplate(response.data.adminTemplate);
             } catch (error) {
                 console.error('Error fetching templates:', error);

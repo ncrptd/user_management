@@ -29,7 +29,6 @@ const modalsSlice = createSlice({
             state.resetPasswordUser = action.payload;
         },
         toggleUploadModal: (state) => {
-            console.log('upload toggle')
             state.isUploadModalOpen = !state.isUploadModalOpen;
         },
     },

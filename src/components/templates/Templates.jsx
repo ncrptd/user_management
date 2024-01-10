@@ -19,20 +19,30 @@ const Templates = ({ templates }) => {
     };
 
     const handleUploadToGlobalFolder = async () => {
-        // Implement logic to upload the selected template to the global folder
         if (selectedTemplate !== null) {
             const selectedTemplateObject = templates.find((template) => template.id === selectedTemplate);
 
             try {
-                const res = await api.uploadGlobalTemplate(selectedTemplateObject);
+                await api.uploadGlobalTemplate(selectedTemplateObject);
                 toast.success('Template Uploaded Successfully')
-                console.log('res', res)
             } catch (error) {
                 console.error(error)
                 toast.error('Failed uploading template')
             }
         }
     };
+
+    const handleDownload = async (data) => {
+        try {
+            const reqBody = { ...data }
+
+            const res = await api.getDownloadLink(reqBody);
+            window.location.href = res.data.signedUrl;
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
 
     return (
         <div className="uploaded-files-container">
@@ -68,22 +78,18 @@ const Templates = ({ templates }) => {
                             <td>{file.folderName}</td>
                             <td>{new Date(file.uploadTimestamp).toLocaleString()}</td>
                             <td>
-                                <button>
-                                    <a
-                                        href={file?.filePath}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="download"
-                                    >
-                                        Download
-                                    </a>
+                                <button onClick={() => handleDownload(file)}>
+                                    Download
                                 </button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-            <button onClick={handleUploadToGlobalFolder}>Upload Selected Template</button>
+            <div className='upload-selected-template-container'>
+                <button onClick={handleUploadToGlobalFolder}>Upload Selected Template</button>
+            </div>
+
         </div>
     );
 };

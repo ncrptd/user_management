@@ -35,7 +35,7 @@
 }
 
 .config-container .create-sheet-button {
-	text-align: right;
+	background-color: #45a049;
 }
 
 .configure-columns {
@@ -182,4 +182,50 @@ span {
 }
 .category-Governance {
 	background-color: #ebccd1; /* Example background color for the 'Governance' category */
+}
+
+.template-save-download-container {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.impact-percentage input[type='number'] {
+	width: 60px;
+	padding: 6px;
+	box-sizing: border-box;
+	border: 2px solid #3498db;
+	border-radius: 4px;
+	background-color: #ecf0f1;
+	font-size: 12px; /* Adjust the font size */
+	color: #333;
+	outline: none;
+	transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.impact-percentage input[type='number']:focus {
+	border-color: #2c3e50;
+	box-shadow: 0 0 8px rgba(52, 152, 219, 0.5);
+}
+
+/* Optional: Style for the placeholder */
+.impact-percentage input[type='number']::placeholder {
+	color: #95a5a6;
+}
+
+/* Optional: Style for the increment/decrement arrows in the input */
+.impact-percentage input[type='number']::-webkit-inner-spin-button,
+.impact-percentage input[type='number']::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.impact-percentage input[type='number'] {
+	-moz-appearance: textfield;
+	appearance: textfield;
+}
+
+/* Optional: Style for the increment/decrement arrows in Firefox */
+.impact-percentage input[type='number']::-moz-inner-spin-button,
+.impact-percentage input[type='number']::-moz-outer-spin-button {
+	-moz-appearance: textfield;
 }

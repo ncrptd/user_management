@@ -13,12 +13,6 @@ function Tenants() {
     const dispatch = useDispatch();
 
     const tenants = useSelector((state) => state.users.tenants)
-    console.log(tenants);
-
-    // const handleCreateUser = () => {
-    //     dispatch(toggleCreateTenantModal())
-    // }
-
     useEffect(() => {
         dispatch(getTenants())
     }, [dispatch])

@@ -14,6 +14,7 @@ export const getUploadedFiles = createAsyncThunk(
     async (param, { rejectWithValue }) => {
         try {
             const response = await api.getUploadedFiles();
+            console.log('uploadedFiles', response)
             return response.data.uploadedFiles;
         } catch (error) {
             return rejectWithValue(error.response.data);

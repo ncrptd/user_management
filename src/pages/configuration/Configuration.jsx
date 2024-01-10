@@ -15,6 +15,7 @@ function Configuration() {
         dataType: "",
         defaultValue: "",
         unitOfMeasure: "",
+        impactPercentage: 0,
     });
 
     const [templateNameInput, setTemplateNameInput] = useState("");
@@ -22,12 +23,12 @@ function Configuration() {
     const [setFileUploadProgress] = useState(null);
 
     const [templates, setTemplates] = useState([]);
-    // const [adminTemplate, setAdminTemplate] = useState([]);
 
     const excelDataTypes = ["Text", "Number", "Date", "Boolean"];
     const categories = ['Environment', 'Social', 'Governance', 'Economic'];
 
     const [templateData, setTemplateData] = useState([])
+
     const openModal = () => {
         setModalVisible(true);
     };
@@ -39,27 +40,50 @@ function Configuration() {
             dataType: "",
             defaultValue: "",
             unitOfMeasure: "",
+            impactPercentage: '',
         });
+    };
+
+
+
+    const calculateTotalPercentage = (category) => {
+        const categoryData = templateData.find((data) => data.category === category);
+        if (!categoryData) return 0;
+
+        return categoryData.columns.reduce((total, column) => total + parseFloat(column.impactPercentage), 0);
     };
 
     const handleTemplateData = () => {
 
         if (!newColumn.category.trim() || !newColumn.columnName.trim()) {
             // Display an error message or take appropriate action
-            alert('Field is empty!');
+            toast.error('Field is empty!');
             return;
         }
+        const impactPercentage = newColumn.impactPercentage === '' ? 0 : parseFloat(newColumn.impactPercentage);
+
+        const totalPercentage = calculateTotalPercentage(newColumn.category);
+        if (totalPercentage + impactPercentage > 100) {
+            // Display an error message or take appropriate action
+            toast.error('Total Impact Percentage cannot exceed 100% for a category!');
+            return;
+        }
+
 
         const existingCategoryIndex = templateData.findIndex((category) => category.category === newColumn.category);
 
         if (existingCategoryIndex !== -1) {
             // Category already exists, add new columns to its columns array
             const updatedData = [...templateData];
+
+
+
             updatedData[existingCategoryIndex].columns.push({
                 columnName: newColumn.columnName,
                 dataType: newColumn.dataType,
                 defaultValue: newColumn.defaultValue,
                 unitOfMeasure: newColumn.unitOfMeasure,
+                impactPercentage
             });
             setTemplateData([...updatedData]);
         } else {
@@ -74,6 +98,8 @@ function Configuration() {
                             dataType: newColumn.dataType,
                             defaultValue: newColumn.defaultValue,
                             unitOfMeasure: newColumn.unitOfMeasure,
+                            impactPercentage
+
                         },
                     ],
                 },
@@ -87,6 +113,7 @@ function Configuration() {
             dataType: '',
             defaultValue: '',
             unitOfMeasure: '',
+            impactPercentage: '',
         });
 
 
@@ -97,8 +124,19 @@ function Configuration() {
     const handleTemplateSave = async (templateName) => {
 
         const wb = utils.book_new();
+        let hasError = false;
 
         templateData.forEach((sheet) => {
+
+            const totalPercentage = calculateTotalPercentage(sheet.category);
+
+            if (totalPercentage !== 100) {
+                // Set hasError flag to true
+                hasError = true;
+
+                toast.error(`Total Impact Percentage for ${sheet.category} must be 100%!`);
+                return;
+            }
             const wsData = sheet.columns.map((column) => ({ [column.columnName]: '' }));
             const ws = utils.json_to_sheet(wsData);
 
@@ -110,7 +148,7 @@ function Configuration() {
                 }
 
                 const commentText = `Data Type: ${item.dataType}\nDefault Value: ${item.defaultValue
-                    }\nUnit Of Measure: ${item.unitOfMeasure}`;
+                    }\nUnit Of Measure: ${item.unitOfMeasure}\nImpact Percentage: ${item.impactPercentage} `;
 
                 if (!ws[cellAddress].c) ws[cellAddress].c = [];
 
@@ -119,6 +157,10 @@ function Configuration() {
 
             utils.book_append_sheet(wb, ws, sheet.category);
         });
+
+        if (hasError) {
+            return;
+        }
         const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
         const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 
@@ -136,28 +178,23 @@ function Configuration() {
         }
     };
 
-    useEffect(() => {
-        const fetchTemplates = async () => {
-            try {
-                const response = await api.getTemplates();
-                console.log('es', response)
-                setTemplates(response.data.templates);
-                // setAdminTemplate(response
-                //     .data.adminTemplate)
-            } catch (error) {
-                console.error('Error fetching templates:', error);
-            }
-        };
-
-        fetchTemplates();
-    }, []);
-
 
 
     const handleDownloadTemplate = () => {
         const wb = utils.book_new();
 
+        let hasError = false;
+
         templateData.forEach((sheet) => {
+            const totalPercentage = calculateTotalPercentage(sheet.category);
+            if (totalPercentage !== 100) {
+                // Set hasError flag to true
+                hasError = true;
+
+                toast.error(`Total Impact Percentage for ${sheet.category} must be 100%!`);
+                return;
+            }
+
             const wsData = sheet.columns.map((column) => ({ [column.columnName]: '' }));
             const ws = utils.json_to_sheet(wsData);
 
@@ -169,7 +206,7 @@ function Configuration() {
                 }
 
                 const commentText = `Data Type: ${item.dataType}\nDefault Value: ${item.defaultValue
-                    }\nUnit Of Measure: ${item.unitOfMeasure}`;
+                    }\nUnit Of Measure: ${item.unitOfMeasure}\nImpact Percentage: ${item.impactPercentage} `;
 
                 if (!ws[cellAddress].c) ws[cellAddress].c = [];
 
@@ -179,20 +216,55 @@ function Configuration() {
             utils.book_append_sheet(wb, ws, sheet.category);
         });
 
-        writeFileXLSX(wb, `ExcelTemplate - ${Date.now()}.xlsx`, { bookType: "xlsx", bookSST: false, type: "blob" });
+        // If there are no errors, initiate the download
+        if (!hasError) {
+            writeFileXLSX(wb, `ExcelTemplate - ${Date.now()}.xlsx`, { bookType: "xlsx", bookSST: false, type: "blob" });
+        }
+    };
 
-    }
+    const handleImpactPercentage = (categoryIndex, columnIndex, e) => {
+
+        const inputValue = e.target.value.trim();
+        const parsedValue = inputValue === '' ? 0 : parseInt(inputValue, 10);
+        if (!isNaN(parsedValue)) {
+            // Clone the existing data structure to avoid directly mutating state
+            const updatedData = JSON.parse(JSON.stringify(templateData));
+
+            // Update the impactPercentage for the specified category and column
+            updatedData[categoryIndex].columns[columnIndex].impactPercentage = inputValue;
+
+            // Update the state with the modified data structure
+            setTemplateData(updatedData);
+        }
+    };
+
+
+    useEffect(() => {
+        const fetchTemplates = async () => {
+            try {
+                const response = await api.getTemplates();
+                setTemplates(response.data.templates);
+                // setAdminTemplate(response
+                //     .data.adminTemplate)
+            } catch (error) {
+                console.error('Error fetching templates:', error);
+            }
+        };
+
+        fetchTemplates();
+    }, []);
+
     return (
         <div className="config-container">
             <h1>Configuration</h1>
-            <button className="create-sheet-button" onClick={openModal}>Create Template</button>
+
 
             {/* {
                 adminTemplate.length > 0 && <UploadedFiles uploadedFiles={adminTemplate} adminTemplate />
             } */}
 
             {templates.length > 0 && <div className="uploaded-templates">
-                <Templates templates={templates} />
+                <Templates templates={templates} adminTemplate />
 
             </div>}
             {templateData.length > 0 && <div className="template-container">
@@ -204,26 +276,38 @@ function Configuration() {
                             <th>Data Type</th>
                             <th>Default Value</th>
                             <th>Unit of Measure</th>
+                            <th>Impact Percentage</th>
                             <th>Category</th>
+
                         </tr>
                     </thead>
                     <tbody>
-                        {templateData.map((category) =>
-                            category.columns.map((column, index) => (
-                                <tr key={`${category.category}-${index}`}>
+                        {templateData.map((category, categoryIndex) =>
+                            category.columns.map((column, columnIndex) => (
+                                <tr key={`${category.category}-${columnIndex}`}>
                                     <td>{column.columnName}</td>
                                     <td>{column.dataType}</td>
                                     <td>{column.defaultValue}</td>
                                     <td>{column.unitOfMeasure}</td>
-                                    <td className={category.category ? `category-${category.category}` : ''}>{category.category}</td>
+                                    <td>
+                                        <input
+                                            type="number"
+                                            value={column.impactPercentage}
+                                            onChange={(e) => handleImpactPercentage(categoryIndex, columnIndex, e)}
+                                        />
+                                    </td>
+                                    <td className={category.category ? `category-${category.category}` : ''}>
+                                        {category.category}
+                                    </td>
                                 </tr>
                             ))
                         )}
                     </tbody>
                 </table>
-            </div>}
 
-          
+            </div>}
+            <button className="create-sheet-button" onClick={openModal}>Create Template</button>
+
 
             {/* Modal */}
             {modalVisible && (
@@ -295,6 +379,19 @@ function Configuration() {
                                 }
                             />
 
+                            <label>Impact Percentage:</label>
+                            <input
+                                type="number"
+                                value={newColumn.impactPercentage}
+                                onChange={(e) => {
+                                    const inputValue = e.target.value.trim();
+
+                                    setNewColumn((prevColumn) => ({
+                                        ...prevColumn,
+                                        impactPercentage: inputValue,
+                                    }));
+                                }}
+                            />
                             <button type="button" onClick={handleTemplateData}>
                                 Add
                             </button>
@@ -304,10 +401,10 @@ function Configuration() {
             )}
 
             {templateData.length > 0 && (
-                <>
+                <div className="template-save-download-container">
                     <button onClick={handleDownloadTemplate}>Download Template</button>
                     <button onClick={() => setSaveModalVisible(true)}>Save Template</button>
-                </>
+                </div>
             )}
             {/* Save Template Modal */}
             {saveModalVisible && (

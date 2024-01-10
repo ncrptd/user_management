@@ -4,6 +4,12 @@ const getFileTypeLabel = (fileType) => {
     const fileTypeMap = {
         'text/csv': 'CSV File',
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'Spreadsheet',
+        'application/json': 'JSON File',
+        'application/pdf': 'PDF File',
+        'application/msword': 'Word Document',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'Word Document',
+        'application/vnd.ms-excel': 'Excel File (XLS)',
+
     };
 
     return fileTypeMap[fileType] || 'Unknown Type';
@@ -22,7 +28,7 @@ const UploadedFiles = ({ uploadedFiles, adminTemplate }) => {
             console.error(error)
         }
     }
-
+    console.log('up', uploadedFiles)
     return (
         <div className="uploaded-files-container">
 
@@ -36,19 +42,20 @@ const UploadedFiles = ({ uploadedFiles, adminTemplate }) => {
                         <th>Organization</th>
                         <th>Folder Name</th>
                         <th>Upload Time</th>
+                        <th>Uploaded By</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     {uploadedFiles &&
-                        uploadedFiles?.map((file) => (
-                            <tr key={file.id}>
-                                <td>{file.fileName}</td>
+                        uploadedFiles?.map((file, index) => (
+                            <tr key={index}>
+                                <td className={file?.confidential ? 'confidential' : ''}>{file.fileName}</td>
                                 <td>{getFileTypeLabel(file.fileType)}</td>
                                 <td>{file.organization || 'N/A'}</td>
                                 <td>{file.folderName}</td>
                                 <td>{new Date(file.uploadTimestamp).toLocaleString()}</td>
-
+                                <td>{file?.uploadedBy?.name}</td>
                                 <td>
                                     <button onClick={() => handleDownload(file)}>
                                         Download

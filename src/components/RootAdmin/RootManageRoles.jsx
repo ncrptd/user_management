@@ -11,8 +11,6 @@ function RootManageRoles({ userId }) {
     const dispatch = useDispatch();
 
     const onManageRoles = () => {
-        // Handle role change logic, e.g., dispatch an action to update the user's role
-        console.log('Selected Role:', selectedRole);
         dispatch(manageRoles({ userId, newRole: selectedRole }))
 
     }
