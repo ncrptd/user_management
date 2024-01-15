@@ -18,6 +18,9 @@ body {
 	width: 100%;
 	padding: 10px 0;
 	text-align: center;
-	background-color: #2d3748;
+	background-color: #27306c;
 	color: white;
+}
+.footer .nis-brand {
+	color: #c29542;
 }

@@ -8,7 +8,8 @@ import Templates from "../../components/templates/Templates";
 // import UploadedFiles from "../../components/uploadedFiles/UploadedFiles";
 
 function Configuration() {
-    const [modalVisible, setModalVisible] = useState(false);
+    const [createTemplateModal, setModalVisible] = useState(false);
+
     const [newColumn, setNewColumn] = useState({
         category: "",
         columnName: "",
@@ -28,6 +29,16 @@ function Configuration() {
     const categories = ['Environment', 'Social', 'Governance', 'Economic'];
 
     const [templateData, setTemplateData] = useState([])
+
+    const [isConfigModalOpen, setConfigModalOpen] = useState(false);
+
+    const openConfigModal = () => {
+        setConfigModalOpen(true);
+    };
+
+    const closeConfigModal = () => {
+        setConfigModalOpen(false);
+    };
 
     const openModal = () => {
         setModalVisible(true);
@@ -239,6 +250,96 @@ function Configuration() {
     };
 
 
+    const handleUploadConfig = async (file) => {
+        try {
+            if (file) {
+                const reader = new FileReader();
+
+                const uploadConfig = async (formData) => {
+                    try {
+                        const res = await api.uploadConfigFile(formData);
+                        if (res.status === 200) {
+                            toast.success('Config File Uploaded Successfully')
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        toast.error('Error Uploading Config File')
+                    }
+                }
+                reader.onload = async (e) => {
+                    try {
+                        // Parse the JSON content
+                        const jsonContent = JSON.parse(e.target.result);
+
+                        // Check if JSON has the expected structure
+                        if (
+                            jsonContent &&
+                            jsonContent.allowedFileFormats &&
+                            Array.isArray(jsonContent.allowedFileFormats) &&
+                            jsonContent.allowedFileFormats.every((format) => typeof format === 'string')
+                        ) {
+                            console.log('Valid JSON structure:', jsonContent);
+
+                            // Proceed with further actions, e.g., uploading the file
+                            const formData = new FormData();
+                            formData.append('configFile', file);
+                            uploadConfig(formData)
+                            // Call the API or perform other actions with formData
+                        } else {
+                            console.error('Invalid JSON structure. Please provide a valid configuration file.');
+                            toast.error('Invalid JSON structure. Please provide a valid configuration file.')
+                        }
+                    } catch (error) {
+                        toast.error('Error parsing JSON:', error)
+                        console.error('Error parsing JSON:', error);
+                    }
+                };
+
+                reader.readAsText(file);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const ConfigModal = ({ onClose, onUpload }) => {
+        const [configFile, setConfigFile] = useState(null);
+
+        const handleFileChange = (e) => {
+            const file = e.target.files[0];
+
+            // Check if the selected file is a JSON file
+            if (file && file.type === 'application/json') {
+                console.log(configFile)
+                setConfigFile(file);
+            } else {
+                // Reset the file selection and show an error message
+                setConfigFile(null);
+                toast.error('Please select a valid JSON file.');
+            }
+        };
+        const handleUpload = () => {
+            if (configFile) {
+                onUpload(configFile);
+                onClose();
+            }
+        };
+
+        return (
+            <div className="config-modal-overlay">
+                <div className="config-modal">
+                    <h2>Upload Configuration File</h2>
+                    <input type="file" accept=".json" onChange={handleFileChange} />
+                    <div className="modal-buttons">
+                        <button onClick={onClose}>Cancel</button>
+                        <button onClick={handleUpload}>Upload</button>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+
     useEffect(() => {
         const fetchTemplates = async () => {
             try {
@@ -257,8 +358,6 @@ function Configuration() {
     return (
         <div className="config-container">
             <h1>Configuration</h1>
-
-
             {/* {
                 adminTemplate.length > 0 && <UploadedFiles uploadedFiles={adminTemplate} adminTemplate />
             } */}
@@ -306,11 +405,17 @@ function Configuration() {
                 </table>
 
             </div>}
-            <button className="create-sheet-button" onClick={openModal}>Create Template</button>
+            <div className="config-page-buttons">
+                <button className="create-sheet-button" onClick={openModal}>Create Template</button>
+                <button onClick={openConfigModal}>Upload Config File</button>
+                {isConfigModalOpen && (
+                    <ConfigModal onClose={closeConfigModal} onUpload={handleUploadConfig} />
+                )}
+            </div>
 
 
-            {/* Modal */}
-            {modalVisible && (
+            {/* Create Template Modal */}
+            {createTemplateModal && (
                 <div className="modal">
                     <div className="modal-content">
                         <span className="close" onClick={closeModal}>

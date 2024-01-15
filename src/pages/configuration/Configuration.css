@@ -229,3 +229,53 @@ span {
 .impact-percentage input[type='number']::-moz-outer-spin-button {
 	-moz-appearance: textfield;
 }
+.config-page-buttons {
+	display: flex;
+	justify-content: space-between;
+}
+.config-modal-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.5);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.config-modal {
+	background: white;
+	padding: 20px;
+	border-radius: 5px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+	max-width: 400px;
+	width: 100%;
+}
+
+.config-modal h2 {
+	margin-bottom: 20px;
+}
+
+.config-modal input {
+	margin-bottom: 20px;
+}
+
+.modal-buttons {
+	display: flex;
+	justify-content: space-between;
+}
+
+.modal-buttons button {
+	padding: 10px 15px;
+	cursor: pointer;
+	background: #3498db;
+	color: white;
+	border: none;
+	border-radius: 3px;
+}
+
+.modal-buttons button:hover {
+	background: #2980b9;
+}

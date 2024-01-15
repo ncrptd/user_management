@@ -38,4 +38,6 @@ export const getTemplates = () => API.get('/config/templates');
 export const uploadGlobalTemplate = (data) => API.post('/config/global-template', data);
 export const getUploadedFiles = () => API.get('/upload');
 export const getFolders = () => API.get('/upload/folders');
-export const getDownloadLink = (data) => API.post('/upload/download-link', data)
+export const getDownloadLink = (data) => API.post('/upload/download-link', data);
+export const uploadConfigFile = (data) => API.post('/config/config-file', data);
+export const getConfigFile = () => API.get('/config/config-file');
