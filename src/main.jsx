@@ -18,6 +18,8 @@ import RequiresAuth from './auth/RequiresAuth.jsx';
 import Home from './pages/home/Home.jsx';
 import Upload from './pages/upload/Upload.jsx';
 import Configuration from './pages/configuration/Configuration.jsx';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+
 
 const router = createBrowserRouter([
   {
@@ -63,12 +65,30 @@ const router = createBrowserRouter([
 ]);
 
 
+let theme = createTheme({
+  palette: {
+    primary: {
+      main: '#0052cc',
+      brand: '#27306c'
+    },
+    secondary: {
+      main: '#edf2ff',
+      brand: '#c29542'
+    },
+  },
+});
+
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <GoogleOAuthProvider clientId="472067935753-epfm6rgqqluit7700dpbubo2fv46grm3.apps.googleusercontent.com">
       <Provider store={store}>
-        <RouterProvider router={router} />
+        <ThemeProvider theme={theme}>
+
+          <RouterProvider router={router} />
+        </ThemeProvider>
+
       </Provider>
     </GoogleOAuthProvider>
   </React.StrictMode>,
-)
+);

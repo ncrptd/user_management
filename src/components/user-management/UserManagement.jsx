@@ -1,38 +1,41 @@
+import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import './UserManagement.css';
 
 const UserManagement = ({ users, className }) => {
     const navigate = useNavigate();
 
     const onManage = (id) => {
-
-        return navigate(`/user-details/${id}`)
-    }
+        navigate(`/user-details/${id}`);
+    };
 
     return (
         <div className={`${className} user-management`}>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Organization</th>
-                        <th>Email</th>
-                        <th>Roles</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {users?.map((user) => (
-                        <tr key={user.id}>
-                            <td>{user.organization}</td>
-                            <td>{user.email}</td>
-                            <td className='role'>{user.role}</td>
-                            <td className="actions">
-                                <button onClick={() => onManage(user?.id)}>Manage</button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            <TableContainer component={Paper}>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Organization</TableCell>
+                            <TableCell>Email</TableCell>
+                            <TableCell>Roles</TableCell>
+                            <TableCell>Action</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {users?.map((user) => (
+                            <TableRow key={user.id}>
+                                <TableCell>{user.organization}</TableCell>
+                                <TableCell>{user.email}</TableCell>
+                                <TableCell className='role'>{user.role}</TableCell>
+                                <TableCell className="actions">
+                                    <Button onClick={() => onManage(user?.id)} variant="contained" color="primary">
+                                        Manage
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
         </div>
     );
 };

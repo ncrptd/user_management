@@ -15,7 +15,6 @@ export const login = createAsyncThunk(
     async (userDetails, { rejectWithValue }) => {
         try {
             const response = await api.login(userDetails)
-
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response ? error.response.data.message : 'Failed to log in');
@@ -55,6 +54,7 @@ export const authSlice = createSlice({
                 state.status = 'success';
                 state.loggedInUser = action.payload.user;
                 state.isLoggedIn = true;
+                state.error = ''
                 localStorage.clear('')
 
                 if (action.payload.user) {
