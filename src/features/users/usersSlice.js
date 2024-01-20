@@ -98,6 +98,30 @@ export const getOnlyUsers = createAsyncThunk(
     }
 );
 
+export const disableUser = createAsyncThunk('users/disable_user', async (userId, { rejectWithValue }) => {
+    try {
+        const response = await api.disableUser(userId);
+        return response.data.user;
+    } catch (error) {
+        console.error(error);
+        return rejectWithValue(
+            error.response ? error.response.data : 'Failed to disable user'
+        );
+    }
+});
+
+export const enableUser = createAsyncThunk('users/enable_user', async (userId, { rejectWithValue }) => {
+    try {
+        const response = await api.enableUser(userId);
+        return response.data.user
+    } catch (error) {
+        console.error(error);
+        return rejectWithValue(
+            error.response ? error.response.data : 'Failed to enable user'
+        );
+    }
+});
+
 export const usersSlice = createSlice({
     name: 'user',
     initialState,
@@ -203,6 +227,38 @@ export const usersSlice = createSlice({
                 state.status = 'error';
                 state.error = action.payload || 'Failed to fetch limited users';
                 console.error('Failed fetching limited users:', action.payload);
+            })
+
+            //DISABLE USER
+            .addCase(disableUser.pending, (state) => {
+                state.status = 'loading';
+                state.error = null;
+            })
+            .addCase(disableUser.fulfilled, (state, action) => {
+                state.status = 'success';
+                // Assuming your API returns the disabled user, update the state accordingly
+                console.log('disP', action.payload)
+                state.allUsers = state.allUsers.map((user) => user.id === action.payload.id ? { ...action.payload } : user);
+            })
+            .addCase(disableUser.rejected, (state, action) => {
+                state.status = 'error';
+                state.error = action.payload || 'Failed to disable user';
+                console.error('Failed to disable user:', action.payload);
+            })
+            //ENABLE USER
+            .addCase(enableUser.pending, (state) => {
+                state.status = 'loading';
+                state.error = null;
+            })
+            .addCase(enableUser.fulfilled, (state, action) => {
+                state.status = 'success';
+                // Assuming your API returns the enabled user, update the state accordingly
+                state.allUsers = state.allUsers.map((user) => user.id === action.payload.id ? { ...action.payload } : user);
+            })
+            .addCase(enableUser.rejected, (state, action) => {
+                state.status = 'error';
+                state.error = action.payload || 'Failed to enable user';
+                console.error('Failed to enable user:', action.payload);
             });
 
 

@@ -1,85 +1,105 @@
-import './UserDetails.css';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Button, Typography, Paper, Grid, Box } from '@mui/material';
 import { toggleDeleteUserModal, toggleResetPasswordModal } from '../../features/modals/modalsSlice';
+import { disableUser, enableUser } from '../../features/users/usersSlice';
 import { getLoggedUser } from '../../utils/getLoggedUser';
-import RootManageRoles from '../../components/RootAdmin/RootManageRoles';
-
-
+import ManageRoles from '../../components/manageRoles/ManageRoles';
 
 const UserDetails = () => {
     const allUsers = useSelector(state => state.users.allUsers);
-
-    const deleteUser = useSelector(state => state.modals.deleteUser);
-    console.log('u', deleteUser)
     const { id } = useParams();
     const user = allUsers?.find((user) => user?.id === id);
+    const loggedUser = getLoggedUser();
 
     const dispatch = useDispatch();
-
     const navigate = useNavigate();
 
-    // const onEditUserProfile = () => {
-    //     navigate('/edit-user-profile')
-
-    // }
     const onRemove = (userId) => {
-        dispatch(toggleDeleteUserModal(userId))
-
-    }
+        dispatch(toggleDeleteUserModal(userId));
+    };
 
     const onPasswordReset = (userId) => {
-        dispatch(toggleResetPasswordModal(userId))
-    }
+        dispatch(toggleResetPasswordModal(userId));
+    };
 
-    const loggedInUser = getLoggedUser();
+    const onDisable = async (userId) => {
+        dispatch(disableUser(userId));
+    };
 
+    const onEnable = async (userId) => {
+        dispatch(enableUser(userId));
+    };
 
     useEffect(() => {
         if (!allUsers) {
-            navigate('/')
+            navigate('/');
         }
     }, [navigate, allUsers]);
 
     if (!user) {
         return <div>User not found</div>;
     }
+
     return (
-        <div>
-            <div className="user-details">
-                <h2>User Details</h2>
-                <div className="user-info">
-                    <div>
-                        <strong>Name:</strong> {user?.name}
-                    </div>
-                    <div>
-                        <strong>Email:</strong> {user?.email}
-                    </div>
-                    <div>
-                        <strong>Organization:</strong> {user?.organization}
-                    </div>
-                    <div>
-                        <strong>Role:</strong> {user?.role}
-                    </div>
-                </div>
-                <div className="user-actions">
-                    {/* <button onClick={() => onDeactivate(user?.id)}>Deactivate</button> */}
-                    {loggedInUser?.role === 'ROOT_ADMIN' && <RootManageRoles userId={user?.id} />}
-                    {loggedInUser?.role === 'TENANT_ADMIN' && <RootManageRoles userId={user?.id} />}
-                    <div>
-                        <button className='remove' onClick={() => onRemove(user?.id)}>Remove</button>
+        <Paper elevation={3} sx={{ padding: 2, margin: 2 }}>
+            <Typography variant="h4" gutterBottom sx={{ textAlign: 'center', fontWeight: 'bold' }}>
+                User Details
+            </Typography>
+            <Grid container spacing={2}>
+                <Grid item xs={12}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        <Typography sx={{ marginBottom: 2 }}>
+                            <strong>Name:</strong> {user?.name}
+                        </Typography>
+                        <Typography sx={{ marginBottom: 2 }}>
+                            <strong>Email:</strong> {user?.email}
+                        </Typography>
+                        <Typography sx={{ marginBottom: 2 }}>
+                            <strong>Organization:</strong> {user?.organization}
+                        </Typography>
+                        <Typography sx={{ marginBottom: 2 }}>
+                            <strong>Role:</strong> {user?.role}
+                        </Typography>
+                        <Typography>
+                            <strong>Disabled:</strong> {user?.isDisabled ? 'True' : 'False'}
+                        </Typography>
+                    </Box>
+                </Grid>
+                <Grid item xs={12}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                        {/* <Button variant="contained" onClick={() => (user?.isDisabled ? onEnable(user?.id) : onDisable(user?.id))} sx={{ marginBottom: 1 }}>
+                            {user?.isDisabled ? 'Enable' : 'Disable'}
+                        </Button> */}
+                        {user?.isDisabled ? <Button variant='contained' sx={{ backgroundColor: 'green' }} onClick={() => onEnable(user?.id)}>
+                            Enable
+                        </Button> : <Button variant='contained' sx={{ backgroundColor: 'red' }} onClick={() => onDisable(user?.id)}>
+                            Disable
+                        </Button>}
+                        {loggedUser?.role === 'ROOT_ADMIN' && <ManageRoles userId={user?.id} />}
+                        {loggedUser?.role === 'TENANT_ADMIN' && <ManageRoles userId={user?.id} />}
 
-                    </div>
-                    <div>
-                        <button onClick={() => onPasswordReset(user?.id)}>Reset Password</button>
-                    </div>
+                        <Button
+                            variant="outlined"
+                            color="error"
+                            onClick={() => onRemove(user?.id)}
+                            sx={{ marginBottom: 1, marginTop: 1 }}
+                        >
+                            Delete User
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            onClick={() => onPasswordReset(user?.id)}
+                            sx={{ marginBottom: 1, marginTop: 1 }}
+                        >
+                            Reset Password
+                        </Button>
 
-                    {/* <button onClick={() => onEditUserProfile}>Edit Profile</button> */}
-
-                </div>
-            </div>
-        </div>
+                    </Box>
+                </Grid>
+            </Grid>
+        </Paper >
     );
 };
 

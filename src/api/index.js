@@ -41,3 +41,5 @@ export const getFolders = () => API.get('/upload/folders');
 export const getDownloadLink = (data) => API.post('/upload/download-link', data);
 export const uploadConfigFile = (data) => API.post('/config/config-file', data);
 export const getConfigFile = () => API.get('/config/config-file');
+export const disableUser = (userId) => API.post(`/users/disable_user/${userId}`)
+export const enableUser = (userId) => API.post(`/users/enable_user/${userId}`)
