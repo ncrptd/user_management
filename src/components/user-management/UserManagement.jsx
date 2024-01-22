@@ -22,7 +22,7 @@ const UserManagement = ({ users, className }) => {
                     </TableHead>
                     <TableBody>
                         {users?.map((user) => (
-                            <TableRow key={user.id}>
+                            <TableRow key={user.id} >
                                 <TableCell>{user.organization}</TableCell>
                                 <TableCell>{user.email}</TableCell>
                                 <TableCell className='role'>{user.role}</TableCell>

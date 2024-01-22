@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { writeFileXLSX, utils } from "xlsx";
 import * as XLSX from 'xlsx';
-import './Configuration.css'
 import toast from "react-hot-toast";
 import * as api from '../../api/index';
 import Templates from "../../components/templates/Templates";
-// import UploadedFiles from "../../components/uploadedFiles/UploadedFiles";
+import ConfigModal from "./modals/ConfigModal";
+import CreatedTemplate from "./components/CreatedTemplate";
+import CreateTemplateModal from "./modals/CreateTemplateModal";
+import SaveTemplateModal from "./modals/SaveTemplateModal";
+import { Container, Typography } from "@mui/material";
 
 function Configuration() {
-    const [createTemplateModal, setModalVisible] = useState(false);
 
     const [newColumn, setNewColumn] = useState({
         category: "",
@@ -20,7 +22,6 @@ function Configuration() {
     });
 
     const [templateNameInput, setTemplateNameInput] = useState("");
-    const [saveModalVisible, setSaveModalVisible] = useState(false);
     const [setFileUploadProgress] = useState(null);
 
     const [templates, setTemplates] = useState([]);
@@ -30,30 +31,6 @@ function Configuration() {
 
     const [templateData, setTemplateData] = useState([])
 
-    const [isConfigModalOpen, setConfigModalOpen] = useState(false);
-
-    const openConfigModal = () => {
-        setConfigModalOpen(true);
-    };
-
-    const closeConfigModal = () => {
-        setConfigModalOpen(false);
-    };
-
-    const openModal = () => {
-        setModalVisible(true);
-    };
-
-    const closeModal = () => {
-        setModalVisible(false);
-        setNewColumn({
-            columnName: "",
-            dataType: "",
-            defaultValue: "",
-            unitOfMeasure: "",
-            impactPercentage: '',
-        });
-    };
 
 
 
@@ -250,95 +227,6 @@ function Configuration() {
     };
 
 
-    const handleUploadConfig = async (file) => {
-        try {
-            if (file) {
-                const reader = new FileReader();
-
-                const uploadConfig = async (formData) => {
-                    try {
-                        const res = await api.uploadConfigFile(formData);
-                        if (res.status === 200) {
-                            toast.success('Config File Uploaded Successfully')
-                        }
-                    } catch (error) {
-                        console.error(error);
-                        toast.error('Error Uploading Config File')
-                    }
-                }
-                reader.onload = async (e) => {
-                    try {
-                        // Parse the JSON content
-                        const jsonContent = JSON.parse(e.target.result);
-
-                        // Check if JSON has the expected structure
-                        if (
-                            jsonContent &&
-                            jsonContent.allowedFileFormats &&
-                            Array.isArray(jsonContent.allowedFileFormats) &&
-                            jsonContent.allowedFileFormats.every((format) => typeof format === 'string')
-                        ) {
-                            console.log('Valid JSON structure:', jsonContent);
-
-                            // Proceed with further actions, e.g., uploading the file
-                            const formData = new FormData();
-                            formData.append('configFile', file);
-                            uploadConfig(formData)
-                            // Call the API or perform other actions with formData
-                        } else {
-                            console.error('Invalid JSON structure. Please provide a valid configuration file.');
-                            toast.error('Invalid JSON structure. Please provide a valid configuration file.')
-                        }
-                    } catch (error) {
-                        toast.error('Error parsing JSON:', error)
-                        console.error('Error parsing JSON:', error);
-                    }
-                };
-
-                reader.readAsText(file);
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const ConfigModal = ({ onClose, onUpload }) => {
-        const [configFile, setConfigFile] = useState(null);
-
-        const handleFileChange = (e) => {
-            const file = e.target.files[0];
-
-            // Check if the selected file is a JSON file
-            if (file && file.type === 'application/json') {
-                console.log(configFile)
-                setConfigFile(file);
-            } else {
-                // Reset the file selection and show an error message
-                setConfigFile(null);
-                toast.error('Please select a valid JSON file.');
-            }
-        };
-        const handleUpload = () => {
-            if (configFile) {
-                onUpload(configFile);
-                onClose();
-            }
-        };
-
-        return (
-            <div className="config-modal-overlay">
-                <div className="config-modal">
-                    <h2>Upload Configuration File</h2>
-                    <input type="file" accept=".json" onChange={handleFileChange} />
-                    <div className="modal-buttons">
-                        <button onClick={onClose}>Cancel</button>
-                        <button onClick={handleUpload}>Upload</button>
-                    </div>
-                </div>
-            </div>
-        );
-    };
-
 
     useEffect(() => {
         const fetchTemplates = async () => {
@@ -356,192 +244,41 @@ function Configuration() {
     }, []);
 
     return (
-        <div className="config-container">
-            <h1>Configuration</h1>
-            {/* {
-                adminTemplate.length > 0 && <UploadedFiles uploadedFiles={adminTemplate} adminTemplate />
-            } */}
+        <Container sx={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <Typography variant="h4" gutterBottom sx={{ textAlign: 'center', fontWeight: 'bold' }}>
+                Configuration
 
-            {templates.length > 0 && <div className="uploaded-templates">
-                <Templates templates={templates} adminTemplate />
-
-            </div>}
-            {templateData.length > 0 && <div className="template-container">
-                <h2>Created Template</h2>
-                <table className="template-table">
-                    <thead>
-                        <tr>
-                            <th>Column Name</th>
-                            <th>Data Type</th>
-                            <th>Default Value</th>
-                            <th>Unit of Measure</th>
-                            <th>Impact Percentage</th>
-                            <th>Category</th>
-
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {templateData.map((category, categoryIndex) =>
-                            category.columns.map((column, columnIndex) => (
-                                <tr key={`${category.category}-${columnIndex}`}>
-                                    <td>{column.columnName}</td>
-                                    <td>{column.dataType}</td>
-                                    <td>{column.defaultValue}</td>
-                                    <td>{column.unitOfMeasure}</td>
-                                    <td>
-                                        <input
-                                            type="number"
-                                            value={column.impactPercentage}
-                                            onChange={(e) => handleImpactPercentage(categoryIndex, columnIndex, e)}
-                                        />
-                                    </td>
-                                    <td className={category.category ? `category-${category.category}` : ''}>
-                                        {category.category}
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-
-            </div>}
-            <div className="config-page-buttons">
-                <button className="create-sheet-button" onClick={openModal}>Create Template</button>
-                <button onClick={openConfigModal}>Upload Config File</button>
-                {isConfigModalOpen && (
-                    <ConfigModal onClose={closeConfigModal} onUpload={handleUploadConfig} />
-                )}
-            </div>
+            </Typography>
 
 
-            {/* Create Template Modal */}
-            {createTemplateModal && (
-                <div className="modal">
-                    <div className="modal-content">
-                        <span className="close" onClick={closeModal}>
-                            &times;
-                        </span>
-                        <h2>Enter Column Details</h2>
-                        <form>
-                            <label>Category:</label>
+            {templates.length > 0 && <Templates templates={templates} adminTemplate />}
 
-                            <select
-                                value={newColumn.category}
-                                onChange={(e) =>
-                                    setNewColumn({ ...newColumn, category: e.target.value })
-                                }
-                            >
-                                <option value="">Select Category</option>
-                                {categories.map((type) => (
-                                    <option key={type} value={type}>
-                                        {type}
-                                    </option>
-                                ))}
-                            </select>
-                            <label>Column Name:</label>
-                            <input
-                                type="text"
-                                value={newColumn.columnName}
-                                onChange={(e) =>
-                                    setNewColumn({ ...newColumn, columnName: e.target.value })
-                                }
-                                required
-                            />
 
-                            <label>Data Type:</label>
-                            <select
-                                value={newColumn.dataType}
-                                onChange={(e) =>
-                                    setNewColumn({ ...newColumn, dataType: e.target.value })
-                                }
-                            >
-                                <option value="">Select Data Type</option>
-                                {excelDataTypes.map((type) => (
-                                    <option key={type} value={type}>
-                                        {type}
-                                    </option>
-                                ))}
-                            </select>
-
-                            <label>Default Value:</label>
-                            <input
-                                type="text"
-                                value={newColumn.defaultValue}
-                                onChange={(e) =>
-                                    setNewColumn({ ...newColumn, defaultValue: e.target.value })
-                                }
-                            />
-
-                            <label>Unit Of Measure:</label>
-                            <input
-                                type="text"
-                                value={newColumn.unitOfMeasure}
-                                onChange={(e) =>
-                                    setNewColumn({
-                                        ...newColumn,
-                                        unitOfMeasure: e.target.value,
-                                    })
-                                }
-                            />
-
-                            <label>Impact Percentage:</label>
-                            <input
-                                type="number"
-                                value={newColumn.impactPercentage}
-                                onChange={(e) => {
-                                    const inputValue = e.target.value.trim();
-
-                                    setNewColumn((prevColumn) => ({
-                                        ...prevColumn,
-                                        impactPercentage: inputValue,
-                                    }));
-                                }}
-                            />
-                            <button type="button" onClick={handleTemplateData}>
-                                Add
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            )}
 
             {templateData.length > 0 && (
-                <div className="template-save-download-container">
-                    <button onClick={handleDownloadTemplate}>Download Template</button>
-                    <button onClick={() => setSaveModalVisible(true)}>Save Template</button>
-                </div>
+                <CreatedTemplate templateData={templateData} handleImpactPercentage={handleImpactPercentage} />
             )}
-            {/* Save Template Modal */}
-            {saveModalVisible && (
-                <div className="modal">
-                    <div className="modal-content">
-                        <span className="close" onClick={() => setSaveModalVisible(false)}>
-                            &times;
-                        </span>
-                        <h2>Save Template</h2>
-                        <form>
-                            <label>Template Name:</label>
-                            <input
-                                type="text"
-                                value={templateNameInput}
-                                onChange={(e) => setTemplateNameInput(e.target.value)}
-                            />
+            {/* Config File Modal */}
+            <SaveTemplateModal
+                templateNameInput={templateNameInput}
+                setTemplateNameInput={setTemplateNameInput}
+                handleTemplateSave={handleTemplateSave}
+                templateData={templateData}
+                handleDownloadTemplate={handleDownloadTemplate}
+            />
 
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    handleTemplateSave(templateNameInput);
-                                    setSaveModalVisible(false);
-                                }}
-                            >
-                                Save
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            )}
+            {/* Create Template Modal */}
+            <CreateTemplateModal
+                newColumn={newColumn}
+                setNewColumn={setNewColumn}
+                categories={categories}
+                excelDataTypes={excelDataTypes}
+                handleTemplateData={handleTemplateData}
+            />
 
-        </div>
+            <ConfigModal />
+
+        </Container>
     );
 }
 

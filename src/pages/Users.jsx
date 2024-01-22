@@ -4,7 +4,7 @@ import UserManagement from '../components/user-management/UserManagement';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { getOnlyUsers } from '../features/users/usersSlice';
-
+import { Container, Typography } from '@mui/material';
 
 
 function Users() {
@@ -19,15 +19,17 @@ function Users() {
         dispatch(getOnlyUsers())
     }, [dispatch])
     return (
-        <div>
+        <Container sx={{ padding: '20px', }}>
 
-            <h1>User Management</h1>
-            {/* <div className='create-user-btn-container'>
-                <button className='create-user-btn' onClick={handleCreateUser}>Create</button>
-            </div> */}
+            <Typography variant="h4" gutterBottom sx={{ textAlign: 'center', fontWeight: 'bold' }}>
+                Users
+
+            </Typography>
+
+
             <UserManagement users={users} param='root' />
 
-        </div>
+        </Container>
     )
 }
 

@@ -1,7 +1,17 @@
 import { useState } from 'react';
-import './Templates.css';
-import * as api from '../../api/index'
+import {
+    Button,
+    Table,
+    TableHead,
+    TableBody,
+    TableRow,
+    TableCell,
+    Radio,
+    Typography,
+} from '@mui/material';
+import * as api from '../../api/index';
 import toast from 'react-hot-toast';
+
 const getFileTypeLabel = (fileType) => {
     const fileTypeMap = {
         'text/csv': 'CSV File',
@@ -24,72 +34,75 @@ const Templates = ({ templates }) => {
 
             try {
                 await api.uploadGlobalTemplate(selectedTemplateObject);
-                toast.success('Template Uploaded Successfully')
+                toast.success('Template Uploaded Successfully');
             } catch (error) {
-                console.error(error)
-                toast.error('Failed uploading template')
+                console.error(error);
+                toast.error('Failed uploading template');
             }
         }
     };
 
     const handleDownload = async (data) => {
         try {
-            const reqBody = { ...data }
+            const reqBody = { ...data };
 
             const res = await api.getDownloadLink(reqBody);
             window.location.href = res.data.signedUrl;
         } catch (error) {
-            console.error(error)
+            console.error(error);
         }
-    }
-
+    };
 
     return (
-        <div className="uploaded-files-container">
-            <h2>Templates</h2>
-            <table className="uploaded-files-table">
-                <thead>
-                    <tr>
-                        <th>Select</th>
-                        <th>File Name</th>
-                        <th>File Size</th>
-                        <th>File Type</th>
-                        <th>Organization</th>
-                        <th>Folder Name</th>
-                        <th>Upload Time</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
+        <div style={{ marginTop: 2 }}>
+            <Typography variant="h5">Templates</Typography>
+            <Table sx={{ minWidth: 650 }}>
+                <TableHead>
+                    <TableRow>
+                        <TableCell sx={{ fontWeight: 'bold' }}>Select</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>File Name</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>File Size</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>File Type</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>Organization</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>Folder Name</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>Upload Time</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}></TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
                     {templates?.map((file) => (
-                        <tr key={file.id}>
-                            <td>
-                                <input
-                                    type="radio"
-                                    name="selectedTemplate"
+                        <TableRow key={file.id}>
+                            <TableCell sx={{ padding: 0 }}>
+                                <Radio
                                     checked={file.id === selectedTemplate}
                                     onChange={() => handleTemplateSelection(file.id)}
                                 />
-                            </td>
-                            <td>{file.fileName}</td>
-                            <td>{file.fileSize} bytes</td>
-                            <td>{getFileTypeLabel(file.fileType)}</td>
-                            <td>{file.organization || 'N/A'}</td>
-                            <td>{file.folderName}</td>
-                            <td>{new Date(file.uploadTimestamp).toLocaleString()}</td>
-                            <td>
-                                <button onClick={() => handleDownload(file)}>
+                            </TableCell>
+                            <TableCell>{file.fileName}</TableCell>
+                            <TableCell>{file.fileSize} bytes</TableCell>
+                            <TableCell>{getFileTypeLabel(file.fileType)}</TableCell>
+                            <TableCell>{file.organization || 'N/A'}</TableCell>
+                            <TableCell>{file.folderName}</TableCell>
+                            <TableCell>{new Date(file.uploadTimestamp).toLocaleString()}</TableCell>
+                            <TableCell>
+                                <Button
+                                    variant="outlined"
+                                    color="primary"
+                                    sx={{ marginRight: 1 }}
+                                    onClick={() => handleDownload(file)}
+                                >
                                     Download
-                                </button>
-                            </td>
-                        </tr>
+                                </Button>
+                            </TableCell>
+                        </TableRow>
                     ))}
-                </tbody>
-            </table>
-            <div className='upload-selected-template-container'>
-                <button onClick={handleUploadToGlobalFolder}>Upload Selected Template</button>
+                </TableBody>
+            </Table>
+            <div style={{ marginTop: 2 }}>
+                <Button variant="contained" color="primary" onClick={handleUploadToGlobalFolder} sx={{ marginTop: 2 }}>
+                    Upload Selected Template
+                </Button>
             </div>
-
         </div>
     );
 };
