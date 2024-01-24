@@ -4,14 +4,30 @@ import {
     TableBody,
     TableRow,
     TableCell,
-    TextField,
     Typography,
-} from '@mui/material';
+    IconButton
 
-const CreatedTemplate = ({ templateData, handleImpactPercentage }) => {
+} from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+// import DeleteIcon from '@mui/icons-material/Delete';
+import { useDispatch } from 'react-redux';
+import { setEditColumnData, toggleEditColumnModal } from '../../../features/template/templateSlice';
+
+
+const CreatedTemplate = ({ templateData }) => {
+    const dispatch = useDispatch();
+
+
+    const handleEditColumn = async (column, category, categoryIndex, columnIndex) => {
+        await dispatch(setEditColumnData({ editedColumnData: column, categoryIndex, columnIndex }))
+        dispatch(toggleEditColumnModal(true));
+
+    }
+
+
     return (
         <div>
-            <Typography variant="h4" sx={{ marginTop: 3, textAlign: 'center', fontWeight: 'bold' }}>Created Template</Typography>
+            <Typography variant="h4" >Template</Typography>
             <Table>
                 <TableHead>
                     <TableRow>
@@ -21,6 +37,7 @@ const CreatedTemplate = ({ templateData, handleImpactPercentage }) => {
                         <TableCell>Unit of Measure</TableCell>
                         <TableCell>Impact Percentage</TableCell>
                         <TableCell>Category</TableCell>
+                        <TableCell>Action</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -32,23 +49,30 @@ const CreatedTemplate = ({ templateData, handleImpactPercentage }) => {
                                 <TableCell>{column.defaultValue}</TableCell>
                                 <TableCell>{column.unitOfMeasure}</TableCell>
                                 <TableCell>
-                                    <TextField
-                                        type="number"
-                                        value={column.impactPercentage}
-                                        onChange={(e) =>
-                                            handleImpactPercentage(categoryIndex, columnIndex, e)
-                                        }
-                                    />
+                                    {column.impactPercentage}
+
                                 </TableCell>
                                 <TableCell className={category.category ? `category-${category.category}` : ''}>
                                     {category.category}
+                                </TableCell>
+                                <TableCell sx={{ display: 'flex', gap: '5px' }}>
+                                    <IconButton onClick={() => handleEditColumn(column, category.category, categoryIndex, columnIndex)}>
+                                        <EditIcon sx={{ color: 'green' }} />
+
+                                    </IconButton>
+                                    {/* <IconButton onClick={() => handleColumnDelete(categoryIndex, columnIndex)}>
+                                        <DeleteIcon sx={{ color: 'red' }} />
+
+                                    </IconButton> */}
                                 </TableCell>
                             </TableRow>
                         ))
                     )}
                 </TableBody>
             </Table>
-        </div>
+
+
+        </div >
     );
 };
 

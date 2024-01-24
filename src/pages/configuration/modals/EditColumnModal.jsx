@@ -9,49 +9,61 @@ import {
     FormControl,
     InputLabel,
 } from '@mui/material';
-import { useState } from 'react';
-import AddIcon from '@mui/icons-material/Add';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { saveEditColumnData, toggleEditColumnModal } from '../../../features/template/templateSlice';
+import { useEffect, useState } from 'react';
 
 
-const CreateTemplateModal = ({
-    newColumn,
-    setNewColumn,
-    categories,
-    excelDataTypes,
-    handleTemplateData,
-    templateData
-}) => {
-    const [open, setOpen] = useState(false);
+const EditColumnModal = ({ excelDataTypes }) => {
+    const { showEditColumnModal } = useSelector((state) => state.template);
 
-    const handleOpen = () => setOpen(true);
+
+    const [formData, setFormData] = useState({
+        columnName: "",
+        dataType: "",
+        defaultValue: "",
+        unitOfMeasure: "",
+        impactPercentage: 0,
+    });
+
+    // Assuming editedColumnData is coming from Redux store or props
+    const editedColumnData = useSelector((state) => state.template.editedColumnData);
+    const dispatch = useDispatch();
+
+
     const handleClose = () => {
-        setOpen(false)
-        setNewColumn({
-            columnName: "",
-            dataType: "",
-            defaultValue: "",
-            unitOfMeasure: "",
-            impactPercentage: '',
-        });
+        dispatch(toggleEditColumnModal(false))
     };
+
+
+
+    const handleSaveEditData = () => {
+        dispatch(saveEditColumnData({ formData }))
+        handleClose();
+    };
+
+
+
+    useEffect(() => {
+        if (editedColumnData) {
+            // If editedColumnData exists, update formData
+            setFormData(editedColumnData);
+        } else {
+            // If editedColumnData is null or undefined, reset formData
+            setFormData({
+                columnName: "",
+                dataType: "",
+                defaultValue: "",
+                unitOfMeasure: "",
+                impactPercentage: 0,
+            });
+        }
+    }, [editedColumnData]);
 
     return (
         <div >
-            <div style={{ display: 'flex', justifyContent: ' flex-end' }}>
-                <Button
-                    onClick={handleOpen}
-                    sx={{
-                        backgroundColor: '#2196F3', // Choose your desired background color
-                        color: 'white',
-                        '&:hover': {
-                            backgroundColor: '#1565C0', // Darker color on hover
-                        },
-                    }}
-                >
-                    {templateData.length <= 0 ? <span>Create Template</span> : <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '5px' }}>  <AddIcon /> Add Column</span>}
-                </Button>
-            </div>
-            <Modal open={open} onClose={handleClose}>
+            <Modal open={showEditColumnModal} onClose={handleClose}>
                 <Box
                     sx={{
                         position: 'absolute',
@@ -68,23 +80,23 @@ const CreateTemplateModal = ({
                     >
                         &times;
                     </span>
-                    <Typography variant="h5">Enter Column Details</Typography>
+                    <Typography variant="h5">Edit Column Details</Typography>
                     <form>
                         <TextField
                             label="Column Name"
                             type="text"
-                            value={newColumn.columnName}
-                            onChange={(e) => setNewColumn({ ...newColumn, columnName: e.target.value })}
+                            value={formData.columnName}
+                            onChange={(e) => setFormData({ ...formData, columnName: e.target.value })}
                             required
                             fullWidth
                             sx={{ marginY: 1 }}
                         />
 
-                        <FormControl fullWidth sx={{ marginY: 1 }}>
+                        {/* <FormControl fullWidth sx={{ marginY: 1 }}>
                             <InputLabel>Category</InputLabel>
                             <Select
-                                value={newColumn.category}
-                                onChange={(e) => setNewColumn({ ...newColumn, category: e.target.value })}
+                                value={formData.category}
+                                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                             >
                                 <MenuItem value="">Select Category</MenuItem>
                                 {categories.map((type) => (
@@ -93,13 +105,13 @@ const CreateTemplateModal = ({
                                     </MenuItem>
                                 ))}
                             </Select>
-                        </FormControl>
+                        </FormControl> */}
 
                         <FormControl fullWidth sx={{ marginY: 1 }}>
                             <InputLabel>Data Type</InputLabel>
                             <Select
-                                value={newColumn.dataType}
-                                onChange={(e) => setNewColumn({ ...newColumn, dataType: e.target.value })}
+                                value={formData.dataType}
+                                onChange={(e) => setFormData({ ...formData, dataType: e.target.value })}
                             >
                                 <MenuItem value="">Select Data Type</MenuItem>
                                 {excelDataTypes.map((type) => (
@@ -113,8 +125,8 @@ const CreateTemplateModal = ({
                         <TextField
                             label="Default Value"
                             type="text"
-                            value={newColumn.defaultValue}
-                            onChange={(e) => setNewColumn({ ...newColumn, defaultValue: e.target.value })}
+                            value={formData.defaultValue}
+                            onChange={(e) => setFormData({ ...formData, defaultValue: e.target.value })}
                             fullWidth
                             sx={{ marginY: 1 }}
                         />
@@ -122,8 +134,8 @@ const CreateTemplateModal = ({
                         <TextField
                             label="Unit Of Measure"
                             type="text"
-                            value={newColumn.unitOfMeasure}
-                            onChange={(e) => setNewColumn({ ...newColumn, unitOfMeasure: e.target.value })}
+                            value={formData.unitOfMeasure}
+                            onChange={(e) => setFormData({ ...formData, unitOfMeasure: e.target.value })}
                             fullWidth
                             sx={{ marginY: 1 }}
                         />
@@ -131,9 +143,9 @@ const CreateTemplateModal = ({
                         <TextField
                             label="Impact Percentage"
                             type="number"
-                            value={newColumn.impactPercentage}
+                            value={formData.impactPercentage}
                             onChange={(e) =>
-                                setNewColumn((prevColumn) => ({
+                                setFormData((prevColumn) => ({
                                     ...prevColumn,
                                     impactPercentage: e.target.value.trim(),
                                 }))
@@ -142,8 +154,8 @@ const CreateTemplateModal = ({
                             sx={{ marginY: 1 }}
                         />
 
-                        <Button type="button" variant="contained" onClick={handleTemplateData} sx={{ marginY: 2 }}>
-                            Add
+                        <Button type="button" variant="contained" onClick={() => handleSaveEditData()} sx={{ marginY: 2 }}>
+                            Save
                         </Button>
                     </form>
                 </Box>
@@ -152,4 +164,4 @@ const CreateTemplateModal = ({
     );
 };
 
-export default CreateTemplateModal;
+export default EditColumnModal;

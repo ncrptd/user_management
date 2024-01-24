@@ -4,11 +4,14 @@ import * as XLSX from 'xlsx';
 import toast from "react-hot-toast";
 import * as api from '../../api/index';
 import Templates from "../../components/templates/Templates";
-import ConfigModal from "./modals/ConfigModal";
+// import ConfigModal from "./modals/ConfigModal";
 import CreatedTemplate from "./components/CreatedTemplate";
 import CreateTemplateModal from "./modals/CreateTemplateModal";
 import SaveTemplateModal from "./modals/SaveTemplateModal";
 import { Container, Typography } from "@mui/material";
+import EditColumnModal from "./modals/EditColumnModal";
+import { useDispatch, useSelector } from "react-redux";
+import { setTemplateData } from "../../features/template/templateSlice";
 
 function Configuration() {
 
@@ -29,9 +32,9 @@ function Configuration() {
     const excelDataTypes = ["Text", "Number", "Date", "Boolean"];
     const categories = ['Environment', 'Social', 'Governance', 'Economic'];
 
-    const [templateData, setTemplateData] = useState([])
-
-
+    // const [templateData, setTemplateData] = useState([]);
+    const { templateData } = useSelector((state) => state.template)
+    const dispatch = useDispatch();
 
 
     const calculateTotalPercentage = (category) => {
@@ -62,7 +65,7 @@ function Configuration() {
 
         if (existingCategoryIndex !== -1) {
             // Category already exists, add new columns to its columns array
-            const updatedData = [...templateData];
+            const updatedData = JSON.parse(JSON.stringify(templateData));
 
 
 
@@ -73,25 +76,28 @@ function Configuration() {
                 unitOfMeasure: newColumn.unitOfMeasure,
                 impactPercentage
             });
-            setTemplateData([...updatedData]);
+            dispatch(setTemplateData({ templateData: updatedData }))
+                ;
         } else {
             // Category doesn't exist, add a new category object
-            setTemplateData((prevData) => [
-                ...prevData,
-                {
-                    category: newColumn.category,
-                    columns: [
-                        {
-                            columnName: newColumn.columnName,
-                            dataType: newColumn.dataType,
-                            defaultValue: newColumn.defaultValue,
-                            unitOfMeasure: newColumn.unitOfMeasure,
-                            impactPercentage
+            dispatch(setTemplateData({
+                templateData: [
+                    ...templateData,
+                    {
+                        category: newColumn.category,
+                        columns: [
+                            {
+                                columnName: newColumn.columnName,
+                                dataType: newColumn.dataType,
+                                defaultValue: newColumn.defaultValue,
+                                unitOfMeasure: newColumn.unitOfMeasure,
+                                impactPercentage
 
-                        },
-                    ],
-                },
-            ]);
+                            },
+                        ],
+                    },
+                ]
+            }));
         }
 
         // Reset the newColumn state
@@ -101,7 +107,7 @@ function Configuration() {
             dataType: '',
             defaultValue: '',
             unitOfMeasure: '',
-            impactPercentage: '',
+            impactPercentage: 0,
         });
 
 
@@ -210,22 +216,38 @@ function Configuration() {
         }
     };
 
-    const handleImpactPercentage = (categoryIndex, columnIndex, e) => {
 
-        const inputValue = e.target.value.trim();
-        const parsedValue = inputValue === '' ? 0 : parseInt(inputValue, 10);
-        if (!isNaN(parsedValue)) {
-            // Clone the existing data structure to avoid directly mutating state
-            const updatedData = JSON.parse(JSON.stringify(templateData));
 
-            // Update the impactPercentage for the specified category and column
-            updatedData[categoryIndex].columns[columnIndex].impactPercentage = inputValue;
 
-            // Update the state with the modified data structure
-            setTemplateData(updatedData);
-        }
-    };
+    // const handleColumnDelete = (categoryIndex, columnIndex) => {
+    //     // Assuming templateData is accessible via useSelector
 
+    //     const newData = JSON.parse(JSON.stringify(templateData));
+
+    //     if (
+    //         categoryIndex >= 0 &&
+    //         categoryIndex < newData.length &&
+    //         columnIndex >= 0 &&
+    //         columnIndex < newData[categoryIndex].columns.length
+    //     ) {
+    //         const updatedColumns = newData[categoryIndex].columns.filter((_, index) => index !== columnIndex);
+    //         newData[categoryIndex].columns = updatedColumns;
+
+    //         if (updatedColumns.length === 0) {
+    //             newData.splice(categoryIndex, 1);
+    //         }
+
+    //         // Dispatch an action to update the state
+    //         dispatch(setTemplateData({ templateData: newData }));
+    //     } else {
+    //         console.error('Invalid indices provided.');
+    //     }
+    // };
+
+
+    // const handleEditColumn = () => {
+    //     console.log(editedColumnData)
+    // }
 
 
     useEffect(() => {
@@ -242,7 +264,6 @@ function Configuration() {
 
         fetchTemplates();
     }, []);
-
     return (
         <Container sx={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <Typography variant="h4" gutterBottom sx={{ textAlign: 'center', fontWeight: 'bold' }}>
@@ -253,10 +274,22 @@ function Configuration() {
 
             {templates.length > 0 && <Templates templates={templates} adminTemplate />}
 
+            {/* Create Template Modal */}
 
+
+            <CreateTemplateModal
+                newColumn={newColumn}
+                setNewColumn={setNewColumn}
+                categories={categories}
+                excelDataTypes={excelDataTypes}
+                handleTemplateData={handleTemplateData}
+                templateData={templateData}
+            />
 
             {templateData.length > 0 && (
-                <CreatedTemplate templateData={templateData} handleImpactPercentage={handleImpactPercentage} />
+                <CreatedTemplate templateData={templateData}
+
+                />
             )}
             {/* Config File Modal */}
             <SaveTemplateModal
@@ -267,17 +300,10 @@ function Configuration() {
                 handleDownloadTemplate={handleDownloadTemplate}
             />
 
-            {/* Create Template Modal */}
-            <CreateTemplateModal
-                newColumn={newColumn}
-                setNewColumn={setNewColumn}
-                categories={categories}
-                excelDataTypes={excelDataTypes}
-                handleTemplateData={handleTemplateData}
-            />
 
-            <ConfigModal />
+            {/* <ConfigModal /> */}
 
+            <EditColumnModal excelDataTypes={excelDataTypes} categories={categories} />
         </Container>
     );
 }

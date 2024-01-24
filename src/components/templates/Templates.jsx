@@ -11,6 +11,8 @@ import {
 } from '@mui/material';
 import * as api from '../../api/index';
 import toast from 'react-hot-toast';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+
 
 const getFileTypeLabel = (fileType) => {
     const fileTypeMap = {
@@ -91,7 +93,7 @@ const Templates = ({ templates }) => {
                                     sx={{ marginRight: 1 }}
                                     onClick={() => handleDownload(file)}
                                 >
-                                    Download
+                                    <CloudDownloadIcon />
                                 </Button>
                             </TableCell>
                         </TableRow>
