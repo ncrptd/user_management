@@ -33,16 +33,54 @@ const templateSlice = createSlice({
                 state.columnIndex < updatedTemplateData[state.categoryIndex].columns.length
             ) {
                 // Update the data with formData
-                updatedTemplateData[state.categoryIndex].columns[state.columnIndex] = action.payload.formData;
+                const { formData } = action.payload;
+                let columnData = updatedTemplateData[state.categoryIndex].columns[state.columnIndex];
+                columnData = { ...columnData, ...formData }; // Update column data
 
-                // Dispatch the action to update the templateData
-                state.templateData = updatedTemplateData
+                // Check if the edited column belongs to a different category
+                if (formData.category !== updatedTemplateData[state.categoryIndex].category) {
+                    const newCategoryIndex = updatedTemplateData.findIndex(category => category.category === formData.category);
+                    if (newCategoryIndex !== -1) {
+                        // Add to existing category and remove from old category
+                        updatedTemplateData[newCategoryIndex].columns.push(columnData);
+                        updatedTemplateData[state.categoryIndex].columns.splice(state.columnIndex, 1);
+
+                        // Remove the previous category if it's empty
+                        if (updatedTemplateData[state.categoryIndex].columns.length === 0) {
+                            updatedTemplateData.splice(state.categoryIndex, 1);
+                        }
+                    } else {
+                        // Create new category and move the column
+                        updatedTemplateData.push({
+                            category: formData.category,
+                            columns: [columnData]
+                        });
+                        updatedTemplateData[state.categoryIndex].columns.splice(state.columnIndex, 1);
+                    }
+                } else {
+                    // Update the column data in the same category
+                    updatedTemplateData[state.categoryIndex].columns[state.columnIndex] = columnData;
+                }
+
+                // Return updated state
+                return {
+                    ...state,
+                    templateData: updatedTemplateData
+                };
 
                 // You can also perform other actions or navigation logic after saving...
             } else {
                 console.error("Invalid indices provided.");
+                return state; // Return the original state in case of invalid indices
             }
         }
+
+
+
+
+
+
+
     },
 })
 

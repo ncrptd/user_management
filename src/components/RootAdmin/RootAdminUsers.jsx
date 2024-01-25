@@ -1,32 +1,43 @@
 import { useDispatch, useSelector } from "react-redux";
-import UserManagement from "../user-management/UserManagement"
+import UserManagement from "../user-management/UserManagement";
 import { toggleCreateAllRoleModal } from "../../features/modals/modalsSlice";
 import { useEffect } from "react";
 import { getUsers } from "../../features/users/usersSlice";
-
+import { Button, CircularProgress } from "@mui/material";
 
 function RootAdminUsers() {
-    const allUsers = useSelector((state) => state.users.allUsers)
-
+    const allUsers = useSelector((state) => state.users.allUsers);
     const dispatch = useDispatch();
 
     const handleCreateUser = () => {
-        dispatch(
-            toggleCreateAllRoleModal()
-        )
-    }
+        dispatch(toggleCreateAllRoleModal());
+    };
+
     useEffect(() => {
-        dispatch(getUsers())
-    }, [dispatch])
+        dispatch(getUsers());
+    }, [dispatch]);
 
     return (
-        <div>
-            <div className="create-user-btn-container">
-                <button className='create-user-btn' onClick={handleCreateUser}>Create </button>
+        <div style={{ padding: 2 }}>
+            <div style={{ marginBottom: 5, display: 'flex', justifyContent: 'flex-end' }}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleCreateUser}
+                    sx={{}}
+                >
+                    Create User
+                </Button>
             </div>
-            {allUsers ? <UserManagement users={allUsers} /> : <p className="loading">Loading...</p>}
+            {allUsers ? (
+                <UserManagement users={allUsers} />
+            ) : (
+                <p style={{ textAlign: "center" }}>
+                    <CircularProgress />
+                </p>
+            )}
         </div>
-    )
+    );
 }
 
-export default RootAdminUsers
+export default RootAdminUsers;

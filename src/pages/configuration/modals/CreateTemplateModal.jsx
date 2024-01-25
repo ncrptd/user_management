@@ -14,6 +14,7 @@ import AddIcon from '@mui/icons-material/Add';
 import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import { setTemplateData } from '../../../features/template/templateSlice';
+import { useTheme } from '@emotion/react';
 
 const categories = ['Environment', 'Social', 'Governance', 'Economic'];
 
@@ -26,6 +27,7 @@ const CreateTemplateModal = ({
     calculateTotalPercentage
 }) => {
     const dispatch = useDispatch();
+    const theme = useTheme();
 
     const [newColumn, setNewColumn] = useState({
         category: "",
@@ -125,14 +127,14 @@ const CreateTemplateModal = ({
                 <Button
                     onClick={handleOpen}
                     sx={{
-                        backgroundColor: '#2196F3', // Choose your desired background color
+                        backgroundColor: theme.palette.primary.brand,
                         color: 'white',
                         '&:hover': {
-                            backgroundColor: '#1565C0', // Darker color on hover
+                            backgroundColor: theme.palette.secondary.brand,
                         },
                     }}
                 >
-                    {templateData.length <= 0 ? <span>Create Template</span> : <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '5px' }}>  <AddIcon /> Add Column</span>}
+                    {templateData.length <= 0 ? <span>Create Template</span> : <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '5px', }}>  <AddIcon /> Add Column</span>}
                 </Button>
             </div>
             <Modal open={open} onClose={handleClose}>
@@ -226,7 +228,12 @@ const CreateTemplateModal = ({
                             sx={{ marginY: 1 }}
                         />
 
-                        <Button type="button" variant="contained" onClick={handleTemplateData} sx={{ marginY: 2 }}>
+                        <Button type="button" variant="contained" onClick={handleTemplateData} sx={{
+                            marginY: 2, backgroundColor: theme.palette.primary.brand, '&:hover': {
+                                backgroundColor: theme.palette.secondary.brand
+
+                            }
+                        }}>
                             Add
                         </Button>
                     </form>

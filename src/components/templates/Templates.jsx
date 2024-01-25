@@ -13,6 +13,7 @@ import * as api from '../../api/index';
 import toast from 'react-hot-toast';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { useTheme } from '@emotion/react';
 
 const getFileTypeLabel = (fileType) => {
     const fileTypeMap = {
@@ -26,6 +27,7 @@ const getFileTypeLabel = (fileType) => {
 const Templates = ({ templates }) => {
     const [selectedTemplate, setSelectedTemplate] = useState(null);
 
+    const theme = useTheme();
     const handleTemplateSelection = (templateId) => {
         setSelectedTemplate(templateId === selectedTemplate ? null : templateId);
     };
@@ -90,10 +92,17 @@ const Templates = ({ templates }) => {
                                 <Button
                                     variant="outlined"
                                     color="primary"
-                                    sx={{ marginRight: 1 }}
+                                    sx={{
+                                        marginRight: 1, color: theme.palette.primary.brand,
+                                        '&:hover': {
+                                            color: theme.palette.secondary.brand,
+                                        },
+                                    }}
                                     onClick={() => handleDownload(file)}
                                 >
-                                    <CloudDownloadIcon />
+                                    <CloudDownloadIcon sx={{
+
+                                    }} />
                                 </Button>
                             </TableCell>
                         </TableRow>
@@ -101,9 +110,19 @@ const Templates = ({ templates }) => {
                 </TableBody>
             </Table>
             <div style={{ marginTop: 2 }}>
-                <Button variant="contained" color="primary" onClick={handleUploadToGlobalFolder} sx={{ marginTop: 2 }}>
+                <Button variant="contained" color="primary" onClick={handleUploadToGlobalFolder} sx={{
+                    marginTop: 2, backgroundColor: theme.palette.primary.brand,
+                    color: 'white',
+                    '&:hover': {
+                        backgroundColor: theme.palette.secondary.brand,
+                    },
+                }}>
                     Default Template
-                    <CloudUploadIcon sx={{ marginLeft: '10px' }} />
+                    <CloudUploadIcon sx={{
+                        marginLeft: '10px', '&hover': {
+                            color: 'red'
+                        }
+                    }} />
                 </Button>
             </div>
         </div>

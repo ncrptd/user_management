@@ -6,12 +6,14 @@ import { toggleDeleteUserModal, toggleResetPasswordModal } from '../../features/
 import { disableUser, enableUser } from '../../features/users/usersSlice';
 import { getLoggedUser } from '../../utils/getLoggedUser';
 import ManageRoles from '../../components/manageRoles/ManageRoles';
+import { useTheme } from '@emotion/react';
 
 const UserDetails = () => {
     const allUsers = useSelector(state => state.users.allUsers);
     const { id } = useParams();
     const user = allUsers?.find((user) => user?.id === id);
     const loggedUser = getLoggedUser();
+    const theme = useTheme();
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -74,7 +76,7 @@ const UserDetails = () => {
                         </Button> */}
                         {user?.isDisabled ? <Button variant='contained' sx={{ backgroundColor: 'green' }} onClick={() => onEnable(user?.id)}>
                             Enable
-                        </Button> : <Button variant='contained' sx={{ backgroundColor: 'red' }} onClick={() => onDisable(user?.id)}>
+                        </Button> : <Button variant='contained' sx={{ backgroundColor: 'gray' }} onClick={() => onDisable(user?.id)}>
                             Disable
                         </Button>}
                         {loggedUser?.role === 'ROOT_ADMIN' && <ManageRoles userId={user?.id} />}
@@ -91,7 +93,7 @@ const UserDetails = () => {
                         <Button
                             variant="outlined"
                             onClick={() => onPasswordReset(user?.id)}
-                            sx={{ marginBottom: 1, marginTop: 1 }}
+                            sx={{ marginBottom: 1, marginTop: 1, color: theme.palette.primary.brand }}
                         >
                             Reset Password
                         </Button>

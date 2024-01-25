@@ -1,15 +1,20 @@
 import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { useTheme } from '@emotion/react';
+
 import { useNavigate } from 'react-router-dom';
 
-const UserManagement = ({ users, className }) => {
+const UserManagement = ({ users }) => {
     const navigate = useNavigate();
 
     const onManage = (id) => {
         navigate(`/user-details/${id}`);
     };
 
+    const theme = useTheme();
+
+
     return (
-        <div className={`${className} user-management`}>
+        <div style={{ marginTop: '20px' }}>
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
@@ -27,7 +32,11 @@ const UserManagement = ({ users, className }) => {
                                 <TableCell>{user.email}</TableCell>
                                 <TableCell className='role'>{user.role}</TableCell>
                                 <TableCell className="actions">
-                                    <Button onClick={() => onManage(user?.id)} variant="contained" color="primary">
+                                    <Button onClick={() => onManage(user?.id)} variant="contained" color="primary" sx={{
+                                        backgroundColor: theme.palette.primary.brand, '&:hover': {
+                                            background: theme.palette.secondary.brand
+                                        }
+                                    }}>
                                         Manage
                                     </Button>
                                 </TableCell>
@@ -36,7 +45,7 @@ const UserManagement = ({ users, className }) => {
                     </TableBody>
                 </Table>
             </TableContainer>
-        </div>
+        </div >
     );
 };
 

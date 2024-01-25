@@ -55,16 +55,7 @@ const Login = () => {
           <button type="submit">Login</button>
         </form>
 
-        {/* <div className="google-login">
-          <GoogleLogin
-            onSuccess={(credentialResponse) => {
-              console.log(credentialResponse);
-            }}
-            onError={() => {
-              console.log('Login Failed');
-            }}
-          />
-        </div> */}
+
 
         <a href="#" className="forgot-password">
           Forgot Password?

@@ -4,34 +4,44 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import SaveIcon from '@mui/icons-material/Save';
 // import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { useTheme } from '@emotion/react';
 const SaveTemplateModal = ({
     templateNameInput,
     setTemplateNameInput,
     handleTemplateSave,
-    handleDownloadTemplate,
-    templateData
+    templateData,
+    // handleDownloadTemplate,
+
 }) => {
     const [open, setOpen] = useState(false);
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
+    const theme = useTheme();
+
     return (
         <div>
             {templateData.length > 0 && (
                 <div>
-                    <Button
+                    {/* <Button
                         variant="contained"
                         onClick={handleDownloadTemplate}
                         sx={{ backgroundColor: '#2196F3', color: 'white', marginRight: '10px' }}
                     >
                         Download Template
-                    </Button>
+                    </Button> */}
 
                     <Button
                         variant="contained"
                         onClick={handleOpen}
-                        sx={{ backgroundColor: '#4CAF50', color: 'white' }}
+                        sx={{
+                            backgroundColor: theme.palette.primary.brand,
+                            color: 'white',
+                            '&:hover': {
+                                backgroundColor: theme.palette.secondary.brand,
+                            },
+                        }}
                     >
                         Save
                         <SaveIcon sx={{ marginLeft: '10px' }} />
@@ -89,7 +99,7 @@ const SaveTemplateModal = ({
                                     handleTemplateSave(templateNameInput);
                                     handleClose();
                                 }}
-                                sx={{ marginY: 2, backgroundColor: '#4CAF50', color: 'white' }}
+                                sx={{ marginY: 2, backgroundColor: theme.palette.primary.brand, color: 'white' }}
                             >
                                 <CheckCircleIcon />
                             </Button>

@@ -3,11 +3,13 @@ import { getLoggedUser } from "../../utils/getLoggedUser";
 import { useDispatch } from "react-redux";
 import { manageRoles } from "../../features/users/usersSlice";
 import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, Typography } from "@mui/material";
+import { useTheme } from "@emotion/react";
 
 function ManageRoles({ userId }) {
     const [selectedRole, setSelectedRole] = useState("USER");
     const loggedInUser = getLoggedUser();
     const dispatch = useDispatch();
+    const theme = useTheme();
 
     const onManageRoles = () => {
         dispatch(manageRoles({ userId, newRole: selectedRole }));
@@ -35,7 +37,13 @@ function ManageRoles({ userId }) {
                     </FormControl>
                 </Grid>
                 <Grid item xs={12} md={4}>
-                    <Button variant="contained" onClick={onManageRoles} fullWidth>
+                    <Button variant="contained" onClick={onManageRoles} fullWidth sx={{
+                        backgroundColor: theme.palette.primary.brand,
+                        '&:hover': {
+                            backgroundColor: theme.palette.secondary.brand,
+
+                        },
+                    }}>
                         Save Role
                     </Button>
                 </Grid>

@@ -12,22 +12,25 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useDispatch } from 'react-redux';
 import { setEditColumnData, toggleEditColumnModal } from '../../../features/template/templateSlice';
+import { useTheme } from '@emotion/react';
 
 
 const CreatedTemplate = ({ templateData, handleColumnDelete }) => {
     const dispatch = useDispatch();
-
+    const theme = useTheme();
 
     const handleEditColumn = async (column, category, categoryIndex, columnIndex) => {
-        await dispatch(setEditColumnData({ editedColumnData: column, categoryIndex, columnIndex }))
+        await dispatch(setEditColumnData({ editedColumnData: { ...column, category }, categoryIndex, columnIndex, category }))
         dispatch(toggleEditColumnModal(true));
 
     }
-
+    console.log('td', templateData)
+    // const renderedData = templateData.sort((a, b) => a.category.localeCompare(b.category));
+    // console.log('rd', renderedData);
 
     return (
         <div>
-            <Typography variant="h4" >Template</Typography>
+            <Typography variant="h4" >Created Template</Typography>
             <Table>
                 <TableHead>
                     <TableRow>
@@ -58,10 +61,10 @@ const CreatedTemplate = ({ templateData, handleColumnDelete }) => {
                                 <TableCell sx={{ display: 'flex', gap: '5px' }}>
                                     <IconButton onClick={() => handleEditColumn(column, category.category, categoryIndex, columnIndex)}>
                                         <EditIcon sx={{ color: 'green' }} />
-
                                     </IconButton>
+
                                     <IconButton onClick={() => handleColumnDelete(categoryIndex, columnIndex)}>
-                                        <DeleteIcon sx={{ color: 'red' }} />
+                                        <DeleteIcon sx={{ color: 'gray', '&:hover': { color: theme.palette.primary.brand } }} />
 
                                     </IconButton>
                                 </TableCell>

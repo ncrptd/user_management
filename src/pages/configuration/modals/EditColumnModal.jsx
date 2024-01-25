@@ -13,9 +13,12 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { saveEditColumnData, toggleEditColumnModal } from '../../../features/template/templateSlice';
 import { useEffect, useState } from 'react';
+import { useTheme } from '@emotion/react';
 
+const categories = ['Environment', 'Social', 'Governance', 'Economic'];
 
 const EditColumnModal = ({ excelDataTypes }) => {
+
     const { showEditColumnModal } = useSelector((state) => state.template);
 
 
@@ -25,11 +28,14 @@ const EditColumnModal = ({ excelDataTypes }) => {
         defaultValue: "",
         unitOfMeasure: "",
         impactPercentage: 0,
+        category: '',
+
     });
 
     // Assuming editedColumnData is coming from Redux store or props
     const editedColumnData = useSelector((state) => state.template.editedColumnData);
     const dispatch = useDispatch();
+    const theme = useTheme();
 
 
     const handleClose = () => {
@@ -56,6 +62,7 @@ const EditColumnModal = ({ excelDataTypes }) => {
                 dataType: "",
                 defaultValue: "",
                 unitOfMeasure: "",
+                category: '',
                 impactPercentage: 0,
             });
         }
@@ -92,7 +99,7 @@ const EditColumnModal = ({ excelDataTypes }) => {
                             sx={{ marginY: 1 }}
                         />
 
-                        {/* <FormControl fullWidth sx={{ marginY: 1 }}>
+                        <FormControl fullWidth sx={{ marginY: 1 }}>
                             <InputLabel>Category</InputLabel>
                             <Select
                                 value={formData.category}
@@ -105,7 +112,7 @@ const EditColumnModal = ({ excelDataTypes }) => {
                                     </MenuItem>
                                 ))}
                             </Select>
-                        </FormControl> */}
+                        </FormControl>
 
                         <FormControl fullWidth sx={{ marginY: 1 }}>
                             <InputLabel>Data Type</InputLabel>
@@ -154,9 +161,22 @@ const EditColumnModal = ({ excelDataTypes }) => {
                             sx={{ marginY: 1 }}
                         />
 
-                        <Button type="button" variant="contained" onClick={() => handleSaveEditData()} sx={{ marginY: 2 }}>
+                        <Button
+                            type="button"
+                            variant="contained"
+                            onClick={() => handleSaveEditData()}
+                            sx={{
+                                marginY: 2,
+                                backgroundColor: theme.palette.primary.brand,
+                                '&:hover': {
+                                    backgroundColor: theme.palette.secondary.brand,
+
+                                },
+                            }}
+                        >
                             Save
                         </Button>
+
                     </form>
                 </Box>
             </Modal>
