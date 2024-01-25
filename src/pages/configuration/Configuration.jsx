@@ -15,14 +15,14 @@ import { setTemplateData } from "../../features/template/templateSlice";
 
 function Configuration() {
 
-    const [newColumn, setNewColumn] = useState({
-        category: "",
-        columnName: "",
-        dataType: "",
-        defaultValue: "",
-        unitOfMeasure: "",
-        impactPercentage: 0,
-    });
+    // const [newColumn, setNewColumn] = useState({
+    //     category: "",
+    //     columnName: "",
+    //     dataType: "",
+    //     defaultValue: "",
+    //     unitOfMeasure: "",
+    //     impactPercentage: 0,
+    // });
 
     const [templateNameInput, setTemplateNameInput] = useState("");
     const [setFileUploadProgress] = useState(null);
@@ -30,7 +30,7 @@ function Configuration() {
     const [templates, setTemplates] = useState([]);
 
     const excelDataTypes = ["Text", "Number", "Date", "Boolean"];
-    const categories = ['Environment', 'Social', 'Governance', 'Economic'];
+    // const categories = ['Environment', 'Social', 'Governance', 'Economic'];
 
     // const [templateData, setTemplateData] = useState([]);
     const { templateData } = useSelector((state) => state.template)
@@ -44,74 +44,74 @@ function Configuration() {
         return categoryData.columns.reduce((total, column) => total + parseFloat(column.impactPercentage), 0);
     };
 
-    const handleTemplateData = () => {
+    // const handleTemplateData = () => {
+    //     console.log('new', newColumn)
+    //     if (!newColumn.category.trim() || !newColumn.columnName.trim()) {
+    //         // Display an error message or take appropriate action
+    //         toast.error('Field is empty!');
+    //         return;
+    //     }
+    //     const impactPercentage = newColumn.impactPercentage === '' ? 0 : parseFloat(newColumn.impactPercentage);
 
-        if (!newColumn.category.trim() || !newColumn.columnName.trim()) {
-            // Display an error message or take appropriate action
-            toast.error('Field is empty!');
-            return;
-        }
-        const impactPercentage = newColumn.impactPercentage === '' ? 0 : parseFloat(newColumn.impactPercentage);
-
-        const totalPercentage = calculateTotalPercentage(newColumn.category);
-        if (totalPercentage + impactPercentage > 100) {
-            // Display an error message or take appropriate action
-            toast.error('Total Impact Percentage cannot exceed 100% for a category!');
-            return;
-        }
-
-
-        const existingCategoryIndex = templateData.findIndex((category) => category.category === newColumn.category);
-
-        if (existingCategoryIndex !== -1) {
-            // Category already exists, add new columns to its columns array
-            const updatedData = JSON.parse(JSON.stringify(templateData));
+    //     const totalPercentage = calculateTotalPercentage(newColumn.category);
+    //     if (totalPercentage + impactPercentage > 100) {
+    //         // Display an error message or take appropriate action
+    //         toast.error('Total Impact Percentage cannot exceed 100% for a category!');
+    //         return;
+    //     }
 
 
+    //     const existingCategoryIndex = templateData.findIndex((category) => category.category === newColumn.category);
 
-            updatedData[existingCategoryIndex].columns.push({
-                columnName: newColumn.columnName,
-                dataType: newColumn.dataType,
-                defaultValue: newColumn.defaultValue,
-                unitOfMeasure: newColumn.unitOfMeasure,
-                impactPercentage
-            });
-            dispatch(setTemplateData({ templateData: updatedData }))
-                ;
-        } else {
-            // Category doesn't exist, add a new category object
-            dispatch(setTemplateData({
-                templateData: [
-                    ...templateData,
-                    {
-                        category: newColumn.category,
-                        columns: [
-                            {
-                                columnName: newColumn.columnName,
-                                dataType: newColumn.dataType,
-                                defaultValue: newColumn.defaultValue,
-                                unitOfMeasure: newColumn.unitOfMeasure,
-                                impactPercentage
-
-                            },
-                        ],
-                    },
-                ]
-            }));
-        }
-
-        // Reset the newColumn state
-        setNewColumn({
-            category: '',
-            columnName: '',
-            dataType: '',
-            defaultValue: '',
-            unitOfMeasure: '',
-            impactPercentage: 0,
-        });
+    //     if (existingCategoryIndex !== -1) {
+    //         // Category already exists, add new columns to its columns array
+    //         const updatedData = JSON.parse(JSON.stringify(templateData));
 
 
-    };
+
+    //         updatedData[existingCategoryIndex].columns.push({
+    //             columnName: newColumn.columnName,
+    //             dataType: newColumn.dataType,
+    //             defaultValue: newColumn.defaultValue,
+    //             unitOfMeasure: newColumn.unitOfMeasure,
+    //             impactPercentage
+    //         });
+    //         dispatch(setTemplateData({ templateData: updatedData }))
+    //             ;
+    //     } else {
+    //         // Category doesn't exist, add a new category object
+    //         dispatch(setTemplateData({
+    //             templateData: [
+    //                 ...templateData,
+    //                 {
+    //                     category: newColumn.category,
+    //                     columns: [
+    //                         {
+    //                             columnName: newColumn.columnName,
+    //                             dataType: newColumn.dataType,
+    //                             defaultValue: newColumn.defaultValue,
+    //                             unitOfMeasure: newColumn.unitOfMeasure,
+    //                             impactPercentage
+
+    //                         },
+    //                     ],
+    //                 },
+    //             ]
+    //         }));
+    //     }
+
+    //     // Reset the newColumn state
+    //     setNewColumn({
+    //         category: '',
+    //         columnName: '',
+    //         dataType: '',
+    //         defaultValue: '',
+    //         unitOfMeasure: '',
+    //         impactPercentage: 0,
+    //     });
+
+
+    // };
 
 
 
@@ -219,35 +219,31 @@ function Configuration() {
 
 
 
-    // const handleColumnDelete = (categoryIndex, columnIndex) => {
-    //     // Assuming templateData is accessible via useSelector
+    const handleColumnDelete = (categoryIndex, columnIndex) => {
 
-    //     const newData = JSON.parse(JSON.stringify(templateData));
+        const newData = JSON.parse(JSON.stringify(templateData));
 
-    //     if (
-    //         categoryIndex >= 0 &&
-    //         categoryIndex < newData.length &&
-    //         columnIndex >= 0 &&
-    //         columnIndex < newData[categoryIndex].columns.length
-    //     ) {
-    //         const updatedColumns = newData[categoryIndex].columns.filter((_, index) => index !== columnIndex);
-    //         newData[categoryIndex].columns = updatedColumns;
+        if (
+            categoryIndex >= 0 &&
+            categoryIndex < newData.length &&
+            columnIndex >= 0 &&
+            columnIndex < newData[categoryIndex].columns.length
+        ) {
+            const updatedColumns = newData[categoryIndex].columns.filter((_, index) => index !== columnIndex);
+            newData[categoryIndex].columns = updatedColumns;
 
-    //         if (updatedColumns.length === 0) {
-    //             newData.splice(categoryIndex, 1);
-    //         }
+            if (updatedColumns.length === 0) {
+                newData.splice(categoryIndex, 1);
+            }
 
-    //         // Dispatch an action to update the state
-    //         dispatch(setTemplateData({ templateData: newData }));
-    //     } else {
-    //         console.error('Invalid indices provided.');
-    //     }
-    // };
+            // Dispatch an action to update the state
+            dispatch(setTemplateData({ templateData: newData }));
+        } else {
+            console.error('Invalid indices provided.');
+        }
+    };
 
 
-    // const handleEditColumn = () => {
-    //     console.log(editedColumnData)
-    // }
 
 
     useEffect(() => {
@@ -278,16 +274,17 @@ function Configuration() {
 
 
             <CreateTemplateModal
-                newColumn={newColumn}
-                setNewColumn={setNewColumn}
-                categories={categories}
+                // newColumn={newColumn}
+                // setNewColumn={setNewColumn}
                 excelDataTypes={excelDataTypes}
-                handleTemplateData={handleTemplateData}
+                // handleTemplateData={handleTemplateData}
                 templateData={templateData}
+                calculateTotalPercentage={calculateTotalPercentage}
             />
 
             {templateData.length > 0 && (
                 <CreatedTemplate templateData={templateData}
+                    handleColumnDelete={handleColumnDelete}
 
                 />
             )}
@@ -303,7 +300,7 @@ function Configuration() {
 
             {/* <ConfigModal /> */}
 
-            <EditColumnModal excelDataTypes={excelDataTypes} categories={categories} />
+            <EditColumnModal excelDataTypes={excelDataTypes} />
         </Container>
     );
 }

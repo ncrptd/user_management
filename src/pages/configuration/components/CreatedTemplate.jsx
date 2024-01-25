@@ -9,12 +9,12 @@ import {
 
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-// import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useDispatch } from 'react-redux';
 import { setEditColumnData, toggleEditColumnModal } from '../../../features/template/templateSlice';
 
 
-const CreatedTemplate = ({ templateData }) => {
+const CreatedTemplate = ({ templateData, handleColumnDelete }) => {
     const dispatch = useDispatch();
 
 
@@ -60,10 +60,10 @@ const CreatedTemplate = ({ templateData }) => {
                                         <EditIcon sx={{ color: 'green' }} />
 
                                     </IconButton>
-                                    {/* <IconButton onClick={() => handleColumnDelete(categoryIndex, columnIndex)}>
+                                    <IconButton onClick={() => handleColumnDelete(categoryIndex, columnIndex)}>
                                         <DeleteIcon sx={{ color: 'red' }} />
 
-                                    </IconButton> */}
+                                    </IconButton>
                                 </TableCell>
                             </TableRow>
                         ))

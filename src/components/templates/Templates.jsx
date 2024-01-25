@@ -12,7 +12,7 @@ import {
 import * as api from '../../api/index';
 import toast from 'react-hot-toast';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
-
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 const getFileTypeLabel = (fileType) => {
     const fileTypeMap = {
@@ -102,7 +102,8 @@ const Templates = ({ templates }) => {
             </Table>
             <div style={{ marginTop: 2 }}>
                 <Button variant="contained" color="primary" onClick={handleUploadToGlobalFolder} sx={{ marginTop: 2 }}>
-                    Upload Selected Template
+                    Default Template
+                    <CloudUploadIcon sx={{ marginLeft: '10px' }} />
                 </Button>
             </div>
         </div>

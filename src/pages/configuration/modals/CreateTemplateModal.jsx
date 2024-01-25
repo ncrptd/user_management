@@ -11,28 +11,112 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
+import toast from 'react-hot-toast';
+import { useDispatch } from 'react-redux';
+import { setTemplateData } from '../../../features/template/templateSlice';
 
+const categories = ['Environment', 'Social', 'Governance', 'Economic'];
 
 const CreateTemplateModal = ({
-    newColumn,
-    setNewColumn,
-    categories,
+    // newColumn,
+    // setNewColumn,
     excelDataTypes,
-    handleTemplateData,
-    templateData
+    // handleTemplateData,
+    templateData,
+    calculateTotalPercentage
 }) => {
+    const dispatch = useDispatch();
+
+    const [newColumn, setNewColumn] = useState({
+        category: "",
+        columnName: "",
+        dataType: "",
+        defaultValue: "",
+        unitOfMeasure: "",
+        impactPercentage: 0,
+    });
     const [open, setOpen] = useState(false);
 
     const handleOpen = () => setOpen(true);
-    const handleClose = () => {
-        setOpen(false)
+
+
+    const resetNewColumn = () => {
         setNewColumn({
+            category: "",
             columnName: "",
             dataType: "",
             defaultValue: "",
             unitOfMeasure: "",
-            impactPercentage: '',
+            impactPercentage: 0,
         });
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+        resetNewColumn();
+    };
+
+
+    const handleTemplateData = () => {
+        if (!newColumn.category.trim() || !newColumn.columnName.trim()) {
+            // Display an error message or take appropriate action
+            toast.error('Field is empty!');
+            return;
+        }
+        const impactPercentage = newColumn.impactPercentage === '' ? 0 : parseFloat(newColumn.impactPercentage);
+
+        const totalPercentage = calculateTotalPercentage(newColumn.category);
+        if (totalPercentage + impactPercentage > 100) {
+            // Display an error message or take appropriate action
+            toast.error('Total Impact Percentage cannot exceed 100% for a category!');
+            return;
+        }
+
+
+        const existingCategoryIndex = templateData.findIndex((category) => category.category === newColumn.category);
+
+        if (existingCategoryIndex !== -1) {
+            // Category already exists, add new columns to its columns array
+            const updatedData = JSON.parse(JSON.stringify(templateData));
+
+
+
+            updatedData[existingCategoryIndex].columns.push({
+                columnName: newColumn.columnName,
+                dataType: newColumn.dataType,
+                defaultValue: newColumn.defaultValue,
+                unitOfMeasure: newColumn.unitOfMeasure,
+                impactPercentage
+            });
+            dispatch(setTemplateData({ templateData: updatedData }))
+                ;
+        } else {
+            // Category doesn't exist, add a new category object
+            dispatch(setTemplateData({
+                templateData: [
+                    ...templateData,
+                    {
+                        category: newColumn.category,
+                        columns: [
+                            {
+                                columnName: newColumn.columnName,
+                                dataType: newColumn.dataType,
+                                defaultValue: newColumn.defaultValue,
+                                unitOfMeasure: newColumn.unitOfMeasure,
+                                impactPercentage
+
+                            },
+                        ],
+                    },
+                ]
+            }));
+        }
+
+        // Reset the newColumn state
+
+        resetNewColumn();
+
+
     };
 
     return (

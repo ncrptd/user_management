@@ -26,7 +26,7 @@ const Footer = () => {
         <Box
             component="footer"
             sx={{
-                py: 3,
+                py: 2,
                 px: 2,
                 mt: 'auto',
                 backgroundColor: (theme) =>
@@ -38,11 +38,13 @@ const Footer = () => {
             <Container maxWidth="sm" sx={{
                 textAlign: 'center'
             }}>
-                <Typography variant="body1">
-                    <p >Powered by <span style={{ color: theme.palette.secondary.brand }}>NIS</span></p>
+                <Typography variant="body1" sx={{ display: 'flex', gap: '10px', textAlign: 'center', justifyContent: 'center', alignItems: 'center' }}>
+                    <p >Powered by <span style={{ color: theme.palette.secondary.brand }}>NIS</span>
+                    </p>
+                    <Copyright />
+
                 </Typography>
 
-                <Copyright />
             </Container>
         </Box>
     );

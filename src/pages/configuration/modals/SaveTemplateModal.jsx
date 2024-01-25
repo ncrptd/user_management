@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Button, Typography, Modal, Box, TextField, IconButton } from '@mui/material';
 import CancelIcon from '@mui/icons-material/Cancel';
-
+import SaveIcon from '@mui/icons-material/Save';
+// import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 const SaveTemplateModal = ({
     templateNameInput,
     setTemplateNameInput,
@@ -31,7 +33,8 @@ const SaveTemplateModal = ({
                         onClick={handleOpen}
                         sx={{ backgroundColor: '#4CAF50', color: 'white' }}
                     >
-                        Save Template
+                        Save
+                        <SaveIcon sx={{ marginLeft: '10px' }} />
                     </Button>
                 </div>
             )}
@@ -88,7 +91,7 @@ const SaveTemplateModal = ({
                                 }}
                                 sx={{ marginY: 2, backgroundColor: '#4CAF50', color: 'white' }}
                             >
-                                Save
+                                <CheckCircleIcon />
                             </Button>
                         </form>
                     </Box>
