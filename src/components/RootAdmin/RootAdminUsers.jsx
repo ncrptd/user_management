@@ -1,17 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import UserManagement from "../user-management/UserManagement";
-import { toggleCreateAllRoleModal } from "../../features/modals/modalsSlice";
 import { useEffect } from "react";
 import { getUsers } from "../../features/users/usersSlice";
-import { Button, CircularProgress } from "@mui/material";
+import { CircularProgress } from "@mui/material";
+import RootAdminCreateUserForm from "../modals/rootAdminCreateUserForm/RootAdminCreateUserForm";
 
 function RootAdminUsers() {
     const allUsers = useSelector((state) => state.users.allUsers);
     const dispatch = useDispatch();
-
-    const handleCreateUser = () => {
-        dispatch(toggleCreateAllRoleModal());
-    };
 
     useEffect(() => {
         dispatch(getUsers());
@@ -19,16 +15,8 @@ function RootAdminUsers() {
 
     return (
         <div style={{ padding: 2 }}>
-            <div style={{ marginBottom: 5, display: 'flex', justifyContent: 'flex-end' }}>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleCreateUser}
-                    sx={{}}
-                >
-                    Create User
-                </Button>
-            </div>
+
+            <RootAdminCreateUserForm />
             {allUsers ? (
                 <UserManagement users={allUsers} />
             ) : (

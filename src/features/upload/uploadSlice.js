@@ -27,7 +27,7 @@ const uploadSlice = createSlice({
     initialState,
     reducers: {
         updateFiles: (state, action) => {
-            state.uploadedFiles.push(action.payload);
+            state.uploadedFiles.push({ ...action.payload });
         }
     },
     extraReducers: (builder) => {

@@ -12,6 +12,7 @@ import { Container, Typography } from "@mui/material";
 import EditColumnModal from "./modals/EditColumnModal";
 import { useDispatch, useSelector } from "react-redux";
 import { setTemplateData } from "../../features/template/templateSlice";
+import ConfigModal from "./modals/ConfigModal";
 
 function Configuration() {
 
@@ -288,7 +289,6 @@ function Configuration() {
 
                 />
             )}
-            {/* Config File Modal */}
             <SaveTemplateModal
                 templateNameInput={templateNameInput}
                 setTemplateNameInput={setTemplateNameInput}
@@ -296,11 +296,11 @@ function Configuration() {
                 templateData={templateData}
                 handleDownloadTemplate={handleDownloadTemplate}
             />
-
-
-            {/* <ConfigModal /> */}
-
             <EditColumnModal excelDataTypes={excelDataTypes} />
+
+            {/* Config File Modal */}
+
+            <ConfigModal />
         </Container>
     );
 }

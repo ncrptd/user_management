@@ -13,6 +13,8 @@ import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 
 import * as api from '../../api/index';
 import { useTheme } from '@emotion/react';
+// import { getLoggedUser } from '../../utils/getLoggedUser';
+
 
 const getFileTypeLabel = (fileType) => {
     const fileTypeMap = {
@@ -33,7 +35,11 @@ const UploadedFiles = ({ uploadedFiles, adminTemplate }) => {
 
     const theme = useTheme();
 
+    // const loggedInUser = getLoggedUser();
+    console.log(uploadedFiles)
     const handleDownload = async (data) => {
+
+
         try {
             const reqBody = { ...data, adminTemplate };
             const res = await api.getDownloadLink(reqBody);
@@ -42,7 +48,6 @@ const UploadedFiles = ({ uploadedFiles, adminTemplate }) => {
             console.error(error);
         }
     };
-
     return (
         <div style={{ marginTop: '20px' }}>
             <Typography variant="h5" style={{ marginBottom: '16px', }}>
@@ -72,7 +77,11 @@ const UploadedFiles = ({ uploadedFiles, adminTemplate }) => {
                                     <TableCell>{file.organization || 'N/A'}</TableCell>
                                     <TableCell>{file.folderName}</TableCell>
                                     <TableCell>{new Date(file.uploadTimestamp).toLocaleString()}</TableCell>
-                                    <TableCell>{adminTemplate ? 'Admin' : file?.uploadedBy?.name} </TableCell>
+                                    <TableCell>
+                                        {adminTemplate ? 'Admin' : file?.uploadedBy?.name}
+                                    </TableCell>
+
+
                                     <TableCell>
                                         <Button
                                             variant="outlined"

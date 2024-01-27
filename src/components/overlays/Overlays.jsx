@@ -56,12 +56,14 @@ function Overlays() {
 
                     </div>
                 </div>}
+
                 {deleteUser && <div className="modal">
                     <div className="modal-content">
                         <RxCross2 onClick={handleDeleteUserModal} />
                         <DeleteUserModal />
                     </div>
                 </div>}
+
                 {resetPasswordUser && <div className="modal">
                     <div className="modal-content">
                         <RxCross2 onClick={handleResetPasswordModal} />

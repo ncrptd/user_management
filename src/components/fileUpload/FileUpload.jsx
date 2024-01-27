@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux';
 import { updateFiles } from '../../features/upload/uploadSlice';
 import { toggleUploadModal } from '../../features/modals/modalsSlice';
 import * as XLSX from 'xlsx';
+import { getLoggedUser } from '../../utils/getLoggedUser';
 // import { toggleUploadModal } from '../../features/modals/modalsSlice';
 
 const FileUpload = () => {
@@ -22,10 +23,11 @@ const FileUpload = () => {
     const [confidential, setConfidential] = useState(false);
     const [allowedFileFormats, setAllowedFileFormats] = useState(null);
     const dispatch = useDispatch();
-    console.log(selectedFolder)
+
+    const loggedInUser = getLoggedUser();
 
     const isSpreadsheetFile = (fileName) => {
-        const allowedFileFormats = ["xls", "xlsx"];
+        const allowedFileFormats = ["xls", "xlsx",];
         const fileExtension = fileName.split('.').pop().toLowerCase();
         return allowedFileFormats.includes(fileExtension);
     };
@@ -130,14 +132,14 @@ const FileUpload = () => {
                 toast.success(`File Uploaded Successfully`);
 
                 setUploadedFileName(file.name);
-                dispatch(updateFiles(result.data.fileUpload));
+                dispatch(updateFiles({ ...result.data.fileUpload, uploadedBy: { name: loggedInUser.name } }));
                 dispatch(toggleUploadModal());
             }
         } catch (error) {
             console.error('Error uploading file:', error);
             setError('Unknown error occurred');
         }
-    }, [selectedFolder, dispatch, confidential, setFileUploadProgress, isModalOpen]);
+    }, [selectedFolder, dispatch, confidential, setFileUploadProgress, isModalOpen, allowedFileFormats, loggedInUser.name]);
 
     const handleFolderChange = (e) => {
         setSelectedFolder(e.target.value);

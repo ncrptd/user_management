@@ -1,20 +1,14 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Container, Typography, CircularProgress } from '@mui/material';
+import { Container, Typography, CircularProgress } from '@mui/material';
 import UserManagement from '../user-management/UserManagement';
-import { toggleCreateTenantModal } from '../../features/modals/modalsSlice';
 import { getUsers } from '../../features/users/usersSlice';
-import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
-import { useTheme } from '@emotion/react';
+import TenantAdminCreateUserForm from '../modals/tenantAdminCreateUserForm/TenantAdminCreateUserForm';
 function TenantAdminUsers() {
     const allUsers = useSelector((state) => state.users.allUsers);
     const dispatch = useDispatch();
 
-    const handleCreateUser = () => {
-        dispatch(toggleCreateTenantModal());
-    };
 
-    const theme = useTheme();
 
     useEffect(() => {
         dispatch(getUsers());
@@ -22,7 +16,7 @@ function TenantAdminUsers() {
 
     return (
         <Container sx={{ padding: 2 }}>
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            {/* <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <Button
                     variant="contained"
                     color="primary"
@@ -39,7 +33,10 @@ function TenantAdminUsers() {
                     Create User
                     <PersonAddAlt1Icon sx={{ marginLeft: '10px' }} />
                 </Button>
-            </div>
+            </div> */}
+
+            <TenantAdminCreateUserForm />
+
             {allUsers ? (
                 <UserManagement users={allUsers} />
             ) : (
