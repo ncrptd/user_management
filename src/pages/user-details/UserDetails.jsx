@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button, Typography, Paper, Grid, Box } from '@mui/material';
+import { Button, Typography, Paper, Grid, Box, Table, TableBody, TableCell, TableContainer, TableRow } from '@mui/material';
 import { toggleDeleteUserModal, toggleResetPasswordModal } from '../../features/modals/modalsSlice';
 import { disableUser, enableUser } from '../../features/users/usersSlice';
 import { getLoggedUser } from '../../utils/getLoggedUser';
 import ManageRoles from '../../components/manageRoles/ManageRoles';
 import { useTheme } from '@emotion/react';
+import { CheckCircleOutline as CheckCircleOutlineIcon, HighlightOff as HighlightOffIcon } from '@mui/icons-material';
 
 const UserDetails = () => {
     const allUsers = useSelector(state => state.users.allUsers);
@@ -45,63 +46,76 @@ const UserDetails = () => {
     }
 
     return (
-        <Paper elevation={3} sx={{ padding: 2, margin: 2 }}>
+        <Paper elevation={3} sx={{ padding: 3, margin: 3 }}>
             <Typography variant="h4" gutterBottom sx={{ textAlign: 'center', fontWeight: 'bold' }}>
                 User Details
             </Typography>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
-                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                        <Typography sx={{ marginBottom: 2 }}>
-                            <strong>Name:</strong> {user?.name}
-                        </Typography>
-                        <Typography sx={{ marginBottom: 2 }}>
-                            <strong>Email:</strong> {user?.email}
-                        </Typography>
-                        <Typography sx={{ marginBottom: 2 }}>
-                            <strong>Organization:</strong> {user?.organization}
-                        </Typography>
-                        <Typography sx={{ marginBottom: 2 }}>
-                            <strong>Role:</strong> {user?.role}
-                        </Typography>
-                        <Typography>
-                            <strong>Disabled:</strong> {user?.isDisabled ? 'True' : 'False'}
-                        </Typography>
-                    </Box>
+                    <TableContainer>
+                        <Table>
+                            <TableBody>
+                                <TableRow>
+                                    <TableCell><strong>Name:</strong></TableCell>
+                                    <TableCell>{user.name}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell><strong>Email:</strong></TableCell>
+                                    <TableCell>{user.email}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell><strong>Organization:</strong></TableCell>
+                                    <TableCell>{user.organization}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell><strong>Role:</strong></TableCell>
+                                    <TableCell>{user.role}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell><strong>Status:</strong></TableCell>
+                                    <TableCell>{user.isDisabled ? 'Disabled' : 'Active'}</TableCell>
+                                </TableRow>
+                                {(loggedUser.role === 'ROOT_ADMIN' || loggedUser.role === 'TENANT_ADMIN') && (
+                                    <TableRow>
+                                        <TableCell><strong>Manage Roles:</strong></TableCell>
+                                        <TableCell>
+                                            <ManageRoles userId={user.id} />
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
                 </Grid>
                 <Grid item xs={12}>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                        {/* <Button variant="contained" onClick={() => (user?.isDisabled ? onEnable(user?.id) : onDisable(user?.id))} sx={{ marginBottom: 1 }}>
-                            {user?.isDisabled ? 'Enable' : 'Disable'}
-                        </Button> */}
-                        {user?.isDisabled ? <Button variant='contained' sx={{ backgroundColor: 'green' }} onClick={() => onEnable(user?.id)}>
-                            Enable
-                        </Button> : <Button variant='contained' sx={{ backgroundColor: 'gray' }} onClick={() => onDisable(user?.id)}>
-                            Disable
-                        </Button>}
-                        {loggedUser?.role === 'ROOT_ADMIN' && <ManageRoles userId={user?.id} />}
-                        {loggedUser?.role === 'TENANT_ADMIN' && <ManageRoles userId={user?.id} />}
-
-                        <Button
-                            variant="outlined"
-                            color="error"
-                            onClick={() => onRemove(user?.id)}
-                            sx={{ marginBottom: 1, marginTop: 1 }}
-                        >
+                    <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 3 }}>
+                        {user.isDisabled ?
+                            <Button variant='contained' onClick={() => onEnable(user.id)} startIcon={<CheckCircleOutlineIcon />} sx={{
+                                marginRight: 2, backgroundColor: theme.palette.primary.brand, '&:hover': {
+                                    background: theme.palette.secondary.brand
+                                }
+                            }}>
+                                Enable User
+                            </Button>
+                            :
+                            <Button variant='contained' onClick={() => onDisable(user.id)} startIcon={<HighlightOffIcon />} sx={{
+                                marginRight: 2, backgroundColor: theme.palette.primary.brand, '&:hover': {
+                                    background: theme.palette.secondary.brand
+                                }
+                            }}>
+                                Disable User
+                            </Button>
+                        }
+                        <Button variant="outlined" color="error" onClick={() => onRemove(user.id)} sx={{ marginRight: 2, }}>
                             Delete User
                         </Button>
-                        <Button
-                            variant="outlined"
-                            onClick={() => onPasswordReset(user?.id)}
-                            sx={{ marginBottom: 1, marginTop: 1, color: theme.palette.primary.brand }}
-                        >
+                        <Button variant="outlined" onClick={() => onPasswordReset(user.id)}>
                             Reset Password
                         </Button>
-
                     </Box>
                 </Grid>
             </Grid>
-        </Paper >
+        </Paper>
     );
 };
 

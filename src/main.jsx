@@ -8,7 +8,6 @@ import {
 } from "react-router-dom";
 import Login from './pages/login/Login.jsx';
 import RootLayout from './rootLayout/RootLayout.jsx';
-import UserDetails from './pages/user-details/UserDetails.jsx';
 import Tenants from './pages/Tenants.jsx';
 import Users from './pages/Users.jsx';
 import { GoogleOAuthProvider } from '@react-oauth/google';
@@ -19,6 +18,7 @@ import Home from './pages/home/Home.jsx';
 import Upload from './pages/upload/Upload.jsx';
 import Configuration from './pages/configuration/Configuration.jsx';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import UserDetails from './pages/user-details/UserDetails.jsx';
 
 
 const router = createBrowserRouter([

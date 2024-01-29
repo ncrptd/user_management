@@ -31,17 +31,14 @@ const getFileTypeLabel = (fileType) => {
 };
 
 
-const UploadedFiles = ({ uploadedFiles, adminTemplate }) => {
+const UploadedFiles = ({ uploadedFiles, }) => {
 
     const theme = useTheme();
 
     // const loggedInUser = getLoggedUser();
-    console.log(uploadedFiles)
     const handleDownload = async (data) => {
-
-
         try {
-            const reqBody = { ...data, adminTemplate };
+            const reqBody = { ...data };
             const res = await api.getDownloadLink(reqBody);
             window.location.href = res.data.signedUrl;
         } catch (error) {
@@ -51,7 +48,7 @@ const UploadedFiles = ({ uploadedFiles, adminTemplate }) => {
     return (
         <div style={{ marginTop: '20px' }}>
             <Typography variant="h5" style={{ marginBottom: '16px', }}>
-                {adminTemplate ? 'Admin Template' : 'Uploaded Files'}
+                Uploaded Files
             </Typography>
             <TableContainer component={Paper} style={{ marginTop: '16px' }}>
                 <Table>
@@ -78,7 +75,7 @@ const UploadedFiles = ({ uploadedFiles, adminTemplate }) => {
                                     <TableCell>{file.folderName}</TableCell>
                                     <TableCell>{new Date(file.uploadTimestamp).toLocaleString()}</TableCell>
                                     <TableCell>
-                                        {adminTemplate ? 'Admin' : file?.uploadedBy?.name}
+                                        {file?.uploadedBy?.name}
                                     </TableCell>
 
 

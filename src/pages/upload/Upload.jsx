@@ -7,6 +7,7 @@ import UploadedFiles from '../../components/uploadedFiles/UploadedFiles';
 import FileUpload from '../../components/fileUpload/FileUpload';
 
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 
 import * as api from '../../api/index';
 import { useTheme } from '@emotion/react';
@@ -21,7 +22,7 @@ function Upload() {
         const fetchTemplates = async () => {
             try {
                 const response = await api.getTemplates();
-                setAdminTemplate(response.data.adminTemplate);
+                setAdminTemplate(response.data.adminTemplate[0]);
             } catch (error) {
                 console.error('Error fetching templates:', error);
             }
@@ -34,15 +35,50 @@ function Upload() {
         dispatch(toggleUploadModal());
     };
 
+    const handleDownload = async () => {
+
+
+        try {
+            const reqBody = { ...adminTemplate, adminTemplate: true };
+            const res = await api.getDownloadLink(reqBody);
+            window.location.href = res.data.signedUrl;
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+
     const theme = useTheme();
 
     return (
         <Container sx={{ padding: '10px' }}>
             {uploadedFiles?.length > 0 && (
-                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
 
 
+                    {adminTemplate && (
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            sx={{
+                                marginTop: 2, backgroundColor: theme.palette.primary.brand,
+                                color: 'white',
+                                '&:hover': {
+                                    backgroundColor: theme.palette.secondary.brand,
+                                },
+                            }}
+                            onClick={() => handleDownload()}
+                        >
+                            Download
+                            <CloudDownloadIcon sx={{
+                                marginLeft: '10px', '&hover': {
+                                    color: 'red'
+                                }
+                            }} />
+                        </Button>
 
+                    )
+                    }
 
                     <Button variant="contained" color="primary"
 
@@ -54,7 +90,9 @@ function Upload() {
                             '&:hover': {
                                 backgroundColor: theme.palette.secondary.brand,
                             },
-                        }}>
+                        }}
+
+                    >
                         Upload
                         <CloudUploadIcon sx={{
                             marginLeft: '10px', '&hover': {
@@ -62,14 +100,14 @@ function Upload() {
                             }
                         }} />
                     </Button>
+
                 </div>
             )}
-            {adminTemplate.length > 0 && (
-                <UploadedFiles uploadedFiles={adminTemplate} adminTemplate />
-            )}
+
+
             {uploadedFiles?.length > 0 && <UploadedFiles uploadedFiles={uploadedFiles} />}
             {uploadedFiles?.length <= 0 && <FileUpload />}
-        </Container>
+        </Container >
     );
 }
 

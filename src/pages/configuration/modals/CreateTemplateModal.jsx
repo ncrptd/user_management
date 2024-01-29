@@ -17,11 +17,11 @@ import { setTemplateData } from '../../../features/template/templateSlice';
 import { useTheme } from '@emotion/react';
 
 const categories = ['Environment', 'Social', 'Governance', 'Economic'];
+const excelDataTypes = ["Text", "Number", "Date", "Boolean"];
 
 const CreateTemplateModal = ({
     // newColumn,
     // setNewColumn,
-    excelDataTypes,
     // handleTemplateData,
     templateData,
     calculateTotalPercentage

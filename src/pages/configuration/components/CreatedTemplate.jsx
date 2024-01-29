@@ -5,7 +5,8 @@ import {
     TableRow,
     TableCell,
     Typography,
-    IconButton
+    IconButton,
+    Box
 
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
@@ -13,9 +14,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useDispatch } from 'react-redux';
 import { setEditColumnData, toggleEditColumnModal } from '../../../features/template/templateSlice';
 import { useTheme } from '@emotion/react';
+import CreateTemplateModal from '../modals/CreateTemplateModal';
 
 
-const CreatedTemplate = ({ templateData, handleColumnDelete }) => {
+const CreatedTemplate = ({ templateData, handleColumnDelete, calculateTotalPercentage }) => {
     const dispatch = useDispatch();
     const theme = useTheme();
 
@@ -24,13 +26,18 @@ const CreatedTemplate = ({ templateData, handleColumnDelete }) => {
         dispatch(toggleEditColumnModal(true));
 
     }
-    console.log('td', templateData)
-    // const renderedData = templateData.sort((a, b) => a.category.localeCompare(b.category));
-    // console.log('rd', renderedData);
 
     return (
-        <div>
-            <Typography variant="h4" >Created Template</Typography>
+        <div style={{ marginTop: '30px' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                <Typography variant="h5" sx={{ marginRight: '10px' }}>Created Template</Typography>
+                <CreateTemplateModal
+                    templateData={templateData}
+                    handleColumnDelete={handleColumnDelete}
+                    calculateTotalPercentage={calculateTotalPercentage}
+                />
+            </Box>
+
             <Table>
                 <TableHead>
                     <TableRow>

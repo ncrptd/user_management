@@ -12,18 +12,10 @@ import { Container, Typography } from "@mui/material";
 import EditColumnModal from "./modals/EditColumnModal";
 import { useDispatch, useSelector } from "react-redux";
 import { setTemplateData } from "../../features/template/templateSlice";
-import ConfigModal from "./modals/ConfigModal";
+// import ConfigModal from "./modals/ConfigModal";
 
 function Configuration() {
 
-    // const [newColumn, setNewColumn] = useState({
-    //     category: "",
-    //     columnName: "",
-    //     dataType: "",
-    //     defaultValue: "",
-    //     unitOfMeasure: "",
-    //     impactPercentage: 0,
-    // });
 
     const [templateNameInput, setTemplateNameInput] = useState("");
     const [setFileUploadProgress] = useState(null);
@@ -274,18 +266,16 @@ function Configuration() {
             {/* Create Template Modal */}
 
 
-            <CreateTemplateModal
-                // newColumn={newColumn}
-                // setNewColumn={setNewColumn}
-                excelDataTypes={excelDataTypes}
-                // handleTemplateData={handleTemplateData}
+            {!templateData.length && <CreateTemplateModal
+
                 templateData={templateData}
                 calculateTotalPercentage={calculateTotalPercentage}
             />
-
+            }
             {templateData.length > 0 && (
                 <CreatedTemplate templateData={templateData}
                     handleColumnDelete={handleColumnDelete}
+                    calculateTotalPercentage={calculateTotalPercentage}
 
                 />
             )}
@@ -300,7 +290,7 @@ function Configuration() {
 
             {/* Config File Modal */}
 
-            <ConfigModal />
+            {/* <ConfigModal /> */}
         </Container>
     );
 }
