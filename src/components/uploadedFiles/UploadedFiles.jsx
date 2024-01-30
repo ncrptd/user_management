@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
     Table,
     TableBody,
@@ -10,11 +11,9 @@ import {
     Typography,
 } from '@mui/material';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
-
 import * as api from '../../api/index';
 import { useTheme } from '@emotion/react';
-// import { getLoggedUser } from '../../utils/getLoggedUser';
-
+import JSZip from 'jszip';
 
 const getFileTypeLabel = (fileType) => {
     const fileTypeMap = {
@@ -30,30 +29,66 @@ const getFileTypeLabel = (fileType) => {
     return fileTypeMap[fileType] || 'Unknown Type';
 };
 
-
-const UploadedFiles = ({ uploadedFiles, }) => {
-
+const UploadedFiles = ({ uploadedFiles }) => {
     const theme = useTheme();
+    const [selectedFiles, setSelectedFiles] = useState([]);
 
-    // const loggedInUser = getLoggedUser();
-    const handleDownload = async (data) => {
+    const handleDownload = async (file) => {
         try {
-            const reqBody = { ...data };
-            const res = await api.getDownloadLink(reqBody);
+            const res = await api.getDownloadLink(file);
             window.location.href = res.data.signedUrl;
         } catch (error) {
             console.error(error);
         }
     };
+
+    const handleDownloadAll = async () => {
+        try {
+            const zip = new JSZip();
+            const currentDate = new Date();
+            const dateString = currentDate.toLocaleDateString().replaceAll('/', '-');
+            // Iterate over selected files
+            for (const file of selectedFiles) {
+                const res = await api.getDownloadLink(file);
+                const blob = await (await fetch(res.data.signedUrl)).blob();
+                zip.file(file.fileName, blob);
+            }
+
+            // Generate zip file
+            const zipBlob = await zip.generateAsync({ type: 'blob' });
+
+            // Trigger download
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(zipBlob);
+            link.download = `${dateString}.zip`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error('Error downloading files:', error);
+        }
+    };
+
+    const handleFileSelect = (file) => {
+        const selectedIndex = selectedFiles.findIndex(selectedFile => selectedFile.fileName === file.fileName);
+        if (selectedIndex === -1) {
+            setSelectedFiles([...selectedFiles, file]);
+        } else {
+            setSelectedFiles(selectedFiles.filter(selectedFile => selectedFile.fileName !== file.fileName));
+        }
+    };
+    console.log('slec', selectedFiles)
     return (
         <div style={{ marginTop: '20px' }}>
-            <Typography variant="h5" style={{ marginBottom: '16px', }}>
+            <Typography variant="h5" style={{ marginBottom: '16px' }}>
                 Uploaded Files
             </Typography>
             <TableContainer component={Paper} style={{ marginTop: '16px' }}>
                 <Table>
                     <TableHead>
                         <TableRow>
+                            <TableCell></TableCell>
+
                             <TableCell>File Name</TableCell>
                             <TableCell>File Type</TableCell>
                             <TableCell>Organization</TableCell>
@@ -61,48 +96,51 @@ const UploadedFiles = ({ uploadedFiles, }) => {
                             <TableCell>Upload Time</TableCell>
                             <TableCell>Uploaded By</TableCell>
                             <TableCell></TableCell>
+                            {selectedFiles.length > 1 && (
+                                <Button variant="contained" color="primary" onClick={handleDownloadAll} style={{ marginTop: '16px' }}>
+                                    Download All
+                                </Button>
+                            )}
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {uploadedFiles &&
-                            uploadedFiles.map((file, index) => (
-                                <TableRow key={index}>
-                                    <TableCell style={{ color: file?.confidential ? 'red' : 'inherit' }}>
-                                        {file.fileName}
-                                    </TableCell>
-                                    <TableCell>{getFileTypeLabel(file.fileType)}</TableCell>
-                                    <TableCell>{file.organization || 'N/A'}</TableCell>
-                                    <TableCell>{file.folderName}</TableCell>
-                                    <TableCell>{new Date(file.uploadTimestamp).toLocaleString()}</TableCell>
-                                    <TableCell>
-                                        {file?.uploadedBy?.name}
-                                    </TableCell>
+                        {uploadedFiles && uploadedFiles.map((file, index) => (
+                            <TableRow key={index}>
+                                <TableCell style={{ color: file?.confidential ? 'red' : 'inherit' }}>
+                                    <input type="checkbox" onChange={() => handleFileSelect(file)} />
+                                </TableCell>
+                                <TableCell style={{ color: file?.confidential ? 'red' : 'inherit' }}>
+                                    {file.fileName}
+                                </TableCell>
+                                <TableCell>{getFileTypeLabel(file.fileType)}</TableCell>
+                                <TableCell>{file.organization || 'N/A'}</TableCell>
+                                <TableCell>{file.folderName}</TableCell>
+                                <TableCell>{new Date(file.uploadTimestamp).toLocaleString()}</TableCell>
+                                <TableCell>
+                                    {file?.uploadedBy?.name}
+                                </TableCell>
+                                <TableCell>
+                                    <Button
+                                        variant="outlined"
+                                        color="primary"
+                                        sx={{
+                                            marginRight: 1, color: theme.palette.primary.brand,
+                                            '&:hover': {
+                                                color: theme.palette.secondary.brand,
+                                            },
+                                        }}
+                                        onClick={() => handleDownload(file)}
+                                    >
+                                        <CloudDownloadIcon />
+                                    </Button>
 
-
-                                    <TableCell>
-                                        <Button
-                                            variant="outlined"
-                                            color="primary"
-                                            sx={{
-                                                marginRight: 1, color: theme.palette.primary.brand,
-                                                '&:hover': {
-                                                    color: theme.palette.secondary.brand,
-                                                },
-                                            }}
-                                            onClick={() => handleDownload(file)}
-                                        >
-                                            <CloudDownloadIcon sx={{
-
-                                            }} />
-                                        </Button>
-
-
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                                </TableCell>
+                            </TableRow>
+                        ))}
                     </TableBody>
                 </Table>
             </TableContainer>
+
         </div>
     );
 };
