@@ -2,12 +2,13 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button, Typography, Paper, Grid, Box, Table, TableBody, TableCell, TableContainer, TableRow } from '@mui/material';
-import { toggleDeleteUserModal, toggleResetPasswordModal } from '../../features/modals/modalsSlice';
 import { disableUser, enableUser } from '../../features/users/usersSlice';
 import { getLoggedUser } from '../../utils/getLoggedUser';
 import ManageRoles from '../../components/manageRoles/ManageRoles';
 import { useTheme } from '@emotion/react';
 import { CheckCircleOutline as CheckCircleOutlineIcon, HighlightOff as HighlightOffIcon } from '@mui/icons-material';
+import DeleteUserModal from '../../components/modals/deleteModal/DeleteUserModal';
+import ResetPasswordModal from '../../components/modals/resetPasswordModal/ResetPasswordModal';
 
 const UserDetails = () => {
     const allUsers = useSelector(state => state.users.allUsers);
@@ -19,13 +20,9 @@ const UserDetails = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const onRemove = (userId) => {
-        dispatch(toggleDeleteUserModal(userId));
-    };
 
-    const onPasswordReset = (userId) => {
-        dispatch(toggleResetPasswordModal(userId));
-    };
+
+
 
     const onDisable = async (userId) => {
         dispatch(disableUser(userId));
@@ -106,12 +103,10 @@ const UserDetails = () => {
                                 Disable User
                             </Button>
                         }
-                        <Button variant="outlined" color="error" onClick={() => onRemove(user.id)} sx={{ marginRight: 2, }}>
-                            Delete User
-                        </Button>
-                        <Button variant="outlined" onClick={() => onPasswordReset(user.id)}>
-                            Reset Password
-                        </Button>
+                        <DeleteUserModal userId={user.id} />
+
+
+                        <ResetPasswordModal userId={user.id} />
                     </Box>
                 </Grid>
             </Grid>

@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { manageRoles } from "../../features/users/usersSlice";
 import { Box, Button, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useTheme } from "@emotion/react";
+import SaveIcon from '@mui/icons-material/Save';
 
 function ManageRoles({ userId }) {
     const [selectedRole, setSelectedRole] = useState("USER");
@@ -35,6 +36,7 @@ function ManageRoles({ userId }) {
             <Button
                 variant="contained"
                 onClick={onManageRoles}
+                startIcon={<SaveIcon />}
                 sx={{
                     backgroundColor: theme.palette.primary.brand, '&:hover': {
                         background: theme.palette.secondary.brand
