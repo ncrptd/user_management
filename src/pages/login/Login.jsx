@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import './Login.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../../features/auth/authSlice';
 import { useNavigate } from 'react-router-dom';
-// import { GoogleLogin } from '@react-oauth/google';
+import { TextField, Button, Typography, Grid, Paper } from '@mui/material';
+import { useTheme } from '@emotion/react';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -33,36 +33,43 @@ const Login = () => {
     navigate('/');
   };
 
+  const theme = useTheme();
   return (
-    <div className="login-page">
-      <div className="login-form">
-        <h2>Login</h2>
-        <form onSubmit={handleLoginSubmit}>
-          <label>Email:</label>
-          <input type="email" value={email} onChange={handleEmailChange} required />
-          <label>Password:</label>
-          <div className="password-input-container">
-            <input
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={handlePasswordChange}
-              required
-            />
-            <span className="password-toggle" onClick={handleTogglePasswordVisibility}>
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
-            </span>
-          </div>
-          <button type="submit">Login</button>
-        </form>
-
-
-
-        <a href="#" className="forgot-password">
-          Forgot Password?
-        </a>
-        {error && <p className="error">{error}</p>}
-      </div>
-    </div>
+    <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
+      <Grid item xs={12} sm={8} md={6} lg={4}>
+        <Paper elevation={3} style={{ padding: '30px', textAlign: 'center' }}>
+          <Typography variant="h4" gutterBottom>
+            Login
+          </Typography>
+          <form onSubmit={handleLoginSubmit} style={{ marginTop: '20px' }}>
+            <TextField label="Email" type="email" value={email} onChange={handleEmailChange} fullWidth required />
+            <div style={{ marginTop: '20px', position: 'relative' }}>
+              <TextField
+                label="Password"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={handlePasswordChange}
+                fullWidth
+                required
+              />
+              <span style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer' }} onClick={handleTogglePasswordVisibility}>
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
+            </div>
+            <Button type="submit" variant="contained" color="primary" fullWidth style={{
+              marginTop: '30px', backgroundColor: theme.palette.primary.brand,
+              color: 'white',
+              '&:hover': {
+                backgroundColor: theme.palette.secondary.brand,
+              },
+            }}>
+              Login
+            </Button>
+          </form>
+          {error && <Typography variant="body2" color="error" style={{ marginTop: '20px' }}>{error}</Typography>}
+        </Paper>
+      </Grid>
+    </Grid>
   );
 };
 

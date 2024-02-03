@@ -29,7 +29,9 @@ const UserManagement = ({ users }) => {
                         {users?.map((user) => (
                             <TableRow key={user.id} >
                                 <TableCell>{user.organization}</TableCell>
-                                <TableCell>{user.email}</TableCell>
+                                <TableCell> <span style={{ color: user.isDisabled ? 'red' : 'inherit' }}>
+                                    {user.email}
+                                </span></TableCell>
                                 <TableCell className='role'>{user.role}</TableCell>
                                 <TableCell className="actions">
                                     <Button onClick={() => onManage(user?.id)} variant="contained" color="primary" sx={{

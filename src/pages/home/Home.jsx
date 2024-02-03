@@ -2,7 +2,6 @@ import { Container, Typography } from '@mui/material';
 import RootAdminUsers from '../../components/RootAdmin/RootAdminUsers';
 import TenantAdminUsers from '../../components/TenantAdmin/TenantAdminUsers';
 import { getLoggedUser } from '../../utils/getLoggedUser';
-import './Home.css';
 
 function Home() {
     const loggedInUser = getLoggedUser();

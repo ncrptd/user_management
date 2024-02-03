@@ -79,6 +79,8 @@ const EditColumnModal = ({ excelDataTypes }) => {
                         transform: 'translate(-50%, -50%)',
                         backgroundColor: 'white',
                         padding: '20px',
+                        borderRadius: '15px'
+
                     }}
                 >
                     <span

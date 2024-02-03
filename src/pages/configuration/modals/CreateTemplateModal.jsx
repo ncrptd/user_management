@@ -137,7 +137,7 @@ const CreateTemplateModal = ({
                     {templateData.length <= 0 ? <span>Create Template</span> : <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '5px', }}>  <AddIcon /> Add Column</span>}
                 </Button>
             </div>
-            <Modal open={open} onClose={handleClose}>
+            <Modal open={open} onClose={handleClose} >
                 <Box
                     sx={{
                         position: 'absolute',
@@ -146,6 +146,7 @@ const CreateTemplateModal = ({
                         transform: 'translate(-50%, -50%)',
                         backgroundColor: 'white',
                         padding: '20px',
+                        borderRadius: '15px'
                     }}
                 >
                     <span

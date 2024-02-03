@@ -77,12 +77,28 @@ const UploadedFiles = ({ uploadedFiles }) => {
             setSelectedFiles(selectedFiles.filter(selectedFile => selectedFile.fileName !== file.fileName));
         }
     };
-    console.log('slec', selectedFiles)
     return (
         <div style={{ marginTop: '20px' }}>
             <Typography variant="h5" style={{ marginBottom: '16px' }}>
                 Uploaded Files
             </Typography>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Button variant="contained" color="primary" onClick={handleDownloadAll} sx={{
+                    backgroundColor: theme.palette.primary.brand,
+                    color: 'white',
+                    '&:hover': {
+                        backgroundColor: theme.palette.secondary.brand,
+                    },
+
+                    display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px',
+                }}
+                    disabled={selectedFiles.length < 2}
+                >
+                    <CloudDownloadIcon />
+                    Download All
+                </Button>
+            </div>
             <TableContainer component={Paper} style={{ marginTop: '16px' }}>
                 <Table>
                     <TableHead>
@@ -96,11 +112,7 @@ const UploadedFiles = ({ uploadedFiles }) => {
                             <TableCell>Upload Time</TableCell>
                             <TableCell>Uploaded By</TableCell>
                             <TableCell></TableCell>
-                            {selectedFiles.length > 1 && (
-                                <Button variant="contained" color="primary" onClick={handleDownloadAll} style={{ marginTop: '16px' }}>
-                                    Download All
-                                </Button>
-                            )}
+
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -141,7 +153,7 @@ const UploadedFiles = ({ uploadedFiles }) => {
                 </Table>
             </TableContainer>
 
-        </div>
+        </div >
     );
 };
 
