@@ -1,8 +1,12 @@
 import axios from "axios";
 
-const API = axios.create({ baseURL: "http://localhost:3000/api/v1" });
+const API = axios.create({
+    baseURL:
+        "http://localhost:3000/api/v1"
+});
 
-
+// "http://localhost:3000/api/v1"
+// "http://13.201.75.82/api/v1"
 API.interceptors.request.use(function (config) {
     const profile = localStorage.getItem('user');
     if (profile) {

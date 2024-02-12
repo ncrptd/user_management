@@ -98,6 +98,7 @@ function TenantAdminCreateUserForm() {
                             onChange={handleChange}
                             required
                             fullWidth
+                            sx={{ marginY: 1 }}
                         />
                         <TextField
                             label="Last Name"
@@ -106,6 +107,7 @@ function TenantAdminCreateUserForm() {
                             onChange={handleChange}
                             required
                             fullWidth
+                            sx={{ marginY: 1 }}
                         />
                         <TextField
                             label="Email"
@@ -115,6 +117,7 @@ function TenantAdminCreateUserForm() {
                             onChange={handleChange}
                             required
                             fullWidth
+                            sx={{ marginY: 1 }}
                         />
                         <TextField
                             label="Password"
@@ -124,6 +127,7 @@ function TenantAdminCreateUserForm() {
                             onChange={handleChange}
                             required
                             fullWidth
+                            sx={{ marginY: 1 }}
                         />
                         <TextField
                             label="Confirm Password"
@@ -135,6 +139,7 @@ function TenantAdminCreateUserForm() {
                             error={passwordError}
                             helperText={passwordError && "Password Does Not Match"}
                             fullWidth
+                            sx={{ marginY: 1 }}
                         />
                         <FormControl fullWidth margin="normal">
                             <InputLabel>Role</InputLabel>
