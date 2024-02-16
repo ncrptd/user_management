@@ -52,38 +52,14 @@ function Upload() {
 
     return (
         <Container sx={{ padding: '10px' }}>
-            {uploadedFiles?.length > 0 && (
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
 
 
-                    {adminTemplate && (
-                        <Button
-                            variant="outlined"
-                            color="primary"
-                            sx={{
-                                marginTop: 2, backgroundColor: theme.palette.primary.brand,
-                                color: 'white',
-                                '&:hover': {
-                                    backgroundColor: theme.palette.secondary.brand,
-                                },
-                            }}
-                            onClick={() => handleDownload()}
-                        >
-                            Download
-                            <CloudDownloadIcon sx={{
-                                marginLeft: '10px', '&hover': {
-                                    color: 'red'
-                                }
-                            }} />
-                        </Button>
-
-                    )
-                    }
-
-                    <Button variant="contained" color="primary"
-
-                        onClick={handleUpload}
-
+                {adminTemplate && (
+                    <Button
+                        variant="outlined"
+                        color="primary"
                         sx={{
                             marginTop: 2, backgroundColor: theme.palette.primary.brand,
                             color: 'white',
@@ -91,18 +67,42 @@ function Upload() {
                                 backgroundColor: theme.palette.secondary.brand,
                             },
                         }}
-
+                        onClick={() => handleDownload()}
                     >
-                        Upload
-                        <CloudUploadIcon sx={{
+                        Download
+                        <CloudDownloadIcon sx={{
                             marginLeft: '10px', '&hover': {
                                 color: 'red'
                             }
                         }} />
                     </Button>
 
-                </div>
-            )}
+                )
+                }
+
+                <Button variant="contained" color="primary"
+
+                    onClick={handleUpload}
+
+                    sx={{
+                        marginTop: 2, backgroundColor: theme.palette.primary.brand,
+                        color: 'white',
+                        '&:hover': {
+                            backgroundColor: theme.palette.secondary.brand,
+                        },
+                    }}
+
+                >
+                    Upload
+                    <CloudUploadIcon sx={{
+                        marginLeft: '10px', '&hover': {
+                            color: 'red'
+                        }
+                    }} />
+                </Button>
+
+            </div>
+
 
 
             {uploadedFiles?.length > 0 && <UploadedFiles uploadedFiles={uploadedFiles} />}

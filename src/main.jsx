@@ -19,6 +19,7 @@ import Upload from './pages/upload/Upload.jsx';
 import Configuration from './pages/configuration/Configuration.jsx';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import UserDetails from './pages/user-details/UserDetails.jsx';
+import UITemplate from './pages/uiTemplate/UITemplate.jsx';
 
 
 const router = createBrowserRouter([
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
       {
         path: 'configuration',
         element: <Configuration />
+      },
+      {
+        path: 'ui-template',
+        element: <UITemplate />
       }
     ]
   },

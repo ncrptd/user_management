@@ -12,12 +12,13 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useDispatch } from 'react-redux';
-import { setEditColumnData, toggleEditColumnModal } from '../../../features/template/templateSlice';
+// import { setEditColumnData, toggleEditColumnModal } from '../../../features/template/templateSlice';
 import { useTheme } from '@emotion/react';
 import CreateTemplateModal from '../modals/CreateTemplateModal';
+import { setEditColumnData, toggleEditColumnModal } from '../../../features/template/templateSlice';
 
 
-const CreatedTemplate = ({ templateData, handleColumnDelete, calculateTotalPercentage }) => {
+const TemplateTable = ({ templateData, handleColumnDelete, calculateTotalPercentage }) => {
     const dispatch = useDispatch();
     const theme = useTheme();
 
@@ -27,11 +28,10 @@ const CreatedTemplate = ({ templateData, handleColumnDelete, calculateTotalPerce
 
     }
 
-    console.log('createdTemplate', templateData)
     return (
         <div style={{ marginTop: '30px' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                <Typography variant="h5" sx={{ marginRight: '10px' }}>Created Template</Typography>
+                <Typography variant="h5" sx={{ marginRight: '10px', color: theme.palette.primary.main }}></Typography>
                 <CreateTemplateModal
                     templateData={templateData}
                     handleColumnDelete={handleColumnDelete}
@@ -39,16 +39,16 @@ const CreatedTemplate = ({ templateData, handleColumnDelete, calculateTotalPerce
                 />
             </Box>
 
-            <Table>
+            <Table sx={{ borderCollapse: 'collapse', width: '100%', '& th, & td': { border: '1px solid #ddd', padding: '8px' } }}>
                 <TableHead>
-                    <TableRow>
-                        <TableCell>Column Name</TableCell>
-                        <TableCell>Data Type</TableCell>
-                        <TableCell>Default Value</TableCell>
-                        <TableCell>Unit of Measure</TableCell>
-                        <TableCell>Impact Percentage</TableCell>
-                        <TableCell>Category</TableCell>
-                        <TableCell>Action</TableCell>
+                    <TableRow sx={{ backgroundColor: theme.palette.primary.brand }}>
+                        <TableCell sx={{ color: '#fff' }}>Column Name</TableCell>
+                        <TableCell sx={{ color: '#fff' }}>Data Type</TableCell>
+                        <TableCell sx={{ color: '#fff' }}>Default Value</TableCell>
+                        <TableCell sx={{ color: '#fff' }}>Unit of Measure</TableCell>
+                        <TableCell sx={{ color: '#fff' }}>Impact Percentage</TableCell>
+                        <TableCell sx={{ color: '#fff' }}>Category</TableCell>
+                        <TableCell sx={{ color: '#fff' }}>Action</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -68,7 +68,7 @@ const CreatedTemplate = ({ templateData, handleColumnDelete, calculateTotalPerce
                                 </TableCell>
                                 <TableCell sx={{ display: 'flex', gap: '5px' }}>
                                     <IconButton onClick={() => handleEditColumn(column, category.category, categoryIndex, columnIndex)}>
-                                        <EditIcon sx={{ color: 'green' }} />
+                                        <EditIcon sx={{ color: 'gray', '&:hover': { color: theme.palette.primary.brand } }} />
                                     </IconButton>
 
                                     <IconButton onClick={() => handleColumnDelete(categoryIndex, columnIndex)}>
@@ -87,4 +87,4 @@ const CreatedTemplate = ({ templateData, handleColumnDelete, calculateTotalPerce
     );
 };
 
-export default CreatedTemplate;
+export default TemplateTable;

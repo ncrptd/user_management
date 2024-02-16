@@ -48,7 +48,7 @@ export const disableUser = (userId) => API.post(`/users/disable_user/${userId}`)
 export const enableUser = (userId) => API.post(`/users/enable_user/${userId}`);
 export const getDownloadLink = (data) => API.post('/upload/download-link', data);
 export const getDownloadLinks = (files) => API.post('/upload/download-link/multi', { files });
-
+export const getGlobalTemplate = () => API.get('/config/global-template')
 // export const getDownloadLinks = async (files) => {
 //     const response = await axios.post('/upload/download-link/multi', { files });
 

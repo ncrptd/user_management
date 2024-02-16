@@ -1,26 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"
+import * as api from '../../api/index'
 import { writeFileXLSX, utils } from "xlsx";
-import * as XLSX from 'xlsx';
-import toast from "react-hot-toast";
-import * as api from '../../api/index';
-import Templates from "../../components/templates/Templates";
-// import ConfigModal from "./modals/ConfigModal";
-import CreatedTemplate from "./components/CreatedTemplate";
-import CreateTemplateModal from "./modals/CreateTemplateModal";
-import SaveTemplateModal from "./modals/SaveTemplateModal";
-import { Container, Typography } from "@mui/material";
-import EditColumnModal from "./modals/EditColumnModal";
-import { useDispatch, useSelector } from "react-redux";
-import { setTemplateData } from "../../features/template/templateSlice";
-// import ConfigModal from "./modals/ConfigModal";
 
-function Configuration() {
+import * as XLSX from 'xlsx';
+
+import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
+import { setTemplateData } from "../../features/template/templateSlice";
+import TemplateTable from "./components/TemplateTable";
+import { Container, Typography } from "@mui/material";
+import EditColumnModal from './modals/EditColumnModal'
+import SaveTemplateModal from './modals/SaveTemplateModal'
+function UITemplate() {
 
 
     const [templateNameInput, setTemplateNameInput] = useState("");
     const [setFileUploadProgress] = useState(null);
 
-    const [templates, setTemplates] = useState([]);
+    // const [setTemplates] = useState([]);
 
     const excelDataTypes = ["Text", "Number", "Date", "Boolean"];
 
@@ -88,8 +85,8 @@ function Configuration() {
 
 
         try {
-            const res = await api.upload('Templates', formData, setFileUploadProgress);
-            setTemplates((prev) => [...prev, res.data.fileUpload]);
+            await api.upload('Templates', formData, setFileUploadProgress);
+            // setTemplates((prev) => [...prev, res.data.fileUpload]);
             toast.success(`File Uploaded Successfully`);
         } catch (error) {
             console.error('Error uploading file:', error);
@@ -171,47 +168,32 @@ function Configuration() {
 
 
 
-
     useEffect(() => {
-        const fetchTemplates = async () => {
+        const fetchGlobalTemplate = async () => {
             try {
-                const response = await api.getTemplates();
-                setTemplates(response.data.templates);
-                // setAdminTemplate(response
-                //     .data.adminTemplate)
+                const res = await api.getGlobalTemplate();
+                if (res.status === 200) {
+                    dispatch(setTemplateData({ templateData: res.data }))
+                }
             } catch (error) {
-                console.error('Error fetching templates:', error);
+                console.error(error)
             }
-        };
+        }
+        fetchGlobalTemplate();
+    }, [dispatch]);
 
-        fetchTemplates();
-    }, []);
+    console.log('td', templateData)
+
     return (
         <Container sx={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <Typography variant="h4" gutterBottom sx={{ textAlign: 'center', fontWeight: 'bold' }}>
-                Configuration
+                UI Template
 
             </Typography>
+            <TemplateTable templateData={templateData}
+                handleColumnDelete={handleColumnDelete}
+                calculateTotalPercentage={calculateTotalPercentage} />
 
-
-            {templates.length > 0 && <Templates templates={templates} adminTemplate />}
-
-            {/* Create Template Modal */}
-
-
-            {!templateData.length && <CreateTemplateModal
-
-                templateData={templateData}
-                calculateTotalPercentage={calculateTotalPercentage}
-            />
-            }
-            {templateData.length > 0 && (
-                <CreatedTemplate templateData={templateData}
-                    handleColumnDelete={handleColumnDelete}
-                    calculateTotalPercentage={calculateTotalPercentage}
-
-                />
-            )}
             <SaveTemplateModal
                 templateNameInput={templateNameInput}
                 setTemplateNameInput={setTemplateNameInput}
@@ -219,14 +201,10 @@ function Configuration() {
                 templateData={templateData}
                 handleDownloadTemplate={handleDownloadTemplate}
             />
-
             <EditColumnModal excelDataTypes={excelDataTypes} />
 
-            {/* Config File Modal */}
-
-            {/* <ConfigModal /> */}
         </Container>
-    );
+    )
 }
 
-export default Configuration;
+export default UITemplate

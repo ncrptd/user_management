@@ -8,7 +8,7 @@ import './FileUpload.css';
 import { useDispatch } from 'react-redux';
 import { updateFiles } from '../../features/upload/uploadSlice';
 import { toggleUploadModal } from '../../features/modals/modalsSlice';
-import * as XLSX from 'xlsx';
+// import * as XLSX from 'xlsx';
 import { getLoggedUser } from '../../utils/getLoggedUser';
 // import { toggleUploadModal } from '../../features/modals/modalsSlice';
 
@@ -21,7 +21,7 @@ const FileUpload = () => {
     const [newFolderName, setNewFolderName] = useState('');
     const [folders, setFolders] = useState([]);
     const [confidential, setConfidential] = useState(false);
-    const [allowedFileFormats, setAllowedFileFormats] = useState(null);
+    // const [allowedFileFormats, setAllowedFileFormats] = useState([]);
     const dispatch = useDispatch();
 
     const loggedInUser = getLoggedUser();
@@ -32,55 +32,55 @@ const FileUpload = () => {
         return allowedFileFormats.includes(fileExtension);
     };
 
-    const checkSheetValues = (file) => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
+    // const checkSheetValues = (file) => {
+    //     return new Promise((resolve, reject) => {
+    //         const reader = new FileReader();
 
-            reader.onload = (e) => {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const firstSheetName = workbook.SheetNames[0];
-                    const worksheet = workbook.Sheets[firstSheetName];
+    //         reader.onload = (e) => {
+    //             try {
+    //                 const data = new Uint8Array(e.target.result);
+    //                 const workbook = XLSX.read(data, { type: 'array' });
+    //                 const firstSheetName = workbook.SheetNames[0];
+    //                 const worksheet = workbook.Sheets[firstSheetName];
 
-                    // Extract column names
-                    const columnNames = Object.keys(worksheet)
-                        .filter((cell) => /^[A-Z]+1$/.test(cell))
-                        .map((cell) => worksheet[cell].v);
+    //                 // Extract column names
+    //                 const columnNames = Object.keys(worksheet)
+    //                     .filter((cell) => /^[A-Z]+1$/.test(cell))
+    //                     .map((cell) => worksheet[cell].v);
 
-                    // Check if there are columns
-                    if (columnNames.length === 0) {
-                        console.log('No columns found in the Excel file.');
-                        resolve(false);
-                        return;
-                    }
+    //                 // Check if there are columns
+    //                 if (columnNames.length === 0) {
+    //                     console.log('No columns found in the Excel file.');
+    //                     resolve(false);
+    //                     return;
+    //                 }
 
-                    // Extract values from the second row (assuming the first row is header)
-                    const values = Object.keys(worksheet)
-                        .filter((cell) => /^[A-Z]+2$/.test(cell))
-                        .map((cell) => worksheet[cell].v);
+    //                 // Extract values from the second row (assuming the first row is header)
+    //                 const values = Object.keys(worksheet)
+    //                     .filter((cell) => /^[A-Z]+2$/.test(cell))
+    //                     .map((cell) => worksheet[cell].v);
 
-                    // Check if there are non-empty values under the columns
-                    if (values.every((value) => value === "")) {
-                        console.log('No non-empty values found under the columns in the Excel file.');
-                        resolve(false);
-                        return;
-                    }
+    //                 // Check if there are non-empty values under the columns
+    //                 if (values.every((value) => value === "")) {
+    //                     console.log('No non-empty values found under the columns in the Excel file.');
+    //                     resolve(false);
+    //                     return;
+    //                 }
 
-                    console.log('Columns:', columnNames);
-                    console.log('Values:', values);
+    //                 console.log('Columns:', columnNames);
+    //                 console.log('Values:', values);
 
-                    // Return true if there are both columns and non-empty values
-                    resolve(true);
-                } catch (error) {
-                    console.error('Error checking sheet values:', error);
-                    reject(error);
-                }
-            };
+    //                 // Return true if there are both columns and non-empty values
+    //                 resolve(true);
+    //             } catch (error) {
+    //                 console.error('Error checking sheet values:', error);
+    //                 reject(error);
+    //             }
+    //         };
 
-            reader.readAsArrayBuffer(file);
-        });
-    };
+    //         reader.readAsArrayBuffer(file);
+    //     });
+    // };
 
     const onDrop = useCallback(async (acceptedFiles) => {
         try {
@@ -93,14 +93,14 @@ const FileUpload = () => {
                 return;
             }
 
-            // const allowedFileFormats = ["xls", "xlsx", "csv", "pdf", "doc", "docx", "json"];
+            const allowedFileFormats = ["xls", "xlsx", "csv", "pdf", "doc", "docx", "json"];
 
             const isFileFormatAllowed = (fileName) => {
                 const fileExtension = fileName.split('.').pop().toLowerCase();
                 return allowedFileFormats.includes(fileExtension);
             };
 
-            if (!isFileFormatAllowed(file.name) || !allowedFileFormats) {
+            if (!isFileFormatAllowed(file.name) || allowedFileFormats.length <= 0) {
                 setError('Unsupported file type');
                 return;
             }
@@ -115,17 +115,24 @@ const FileUpload = () => {
                     return;
                 }
 
-                const check = await checkSheetValues(file);
-                if (check) {
-                    const result = await api.upload(selectedFolder, formData, setFileUploadProgress);
-                    toast.success(`File Uploaded Successfully`);
-                    setUploadedFileName(file.name);
-                    dispatch(updateFiles(result.data.fileUpload));
-                    if (!isModalOpen) {
-                        dispatch(toggleUploadModal())
-                    }
-                } else {
-                    toast.error('Template is Empty')
+                // const check = await checkSheetValues(file);
+                // if (check) {
+                //     const result = await api.upload(selectedFolder, formData, setFileUploadProgress);
+                //     toast.success(`File Uploaded Successfully`);
+                //     setUploadedFileName(file.name);
+                //     dispatch(updateFiles(result.data.fileUpload));
+                //     if (!isModalOpen) {
+                //         dispatch(toggleUploadModal())
+                //     }
+                // } else {
+                //     toast.error('Template is Empty')
+                // }
+                const result = await api.upload(selectedFolder, formData, setFileUploadProgress);
+                toast.success(`File Uploaded Successfully`);
+                setUploadedFileName(file.name);
+                dispatch(updateFiles(result.data.fileUpload));
+                if (!isModalOpen) {
+                    dispatch(toggleUploadModal())
                 }
             } else {
                 const result = await api.upload(selectedFolder, formData, setFileUploadProgress);
@@ -139,7 +146,7 @@ const FileUpload = () => {
             console.error('Error uploading file:', error);
             setError('Unknown error occurred');
         }
-    }, [selectedFolder, dispatch, confidential, setFileUploadProgress, isModalOpen, allowedFileFormats, loggedInUser.name]);
+    }, [selectedFolder, dispatch, confidential, setFileUploadProgress, isModalOpen, loggedInUser.name]);
 
     const handleFolderChange = (e) => {
         setSelectedFolder(e.target.value);
@@ -211,18 +218,18 @@ const FileUpload = () => {
                 toast.error('Error fetching folders');
             }
         };
-        const fetchConfigFile = async () => {
-            try {
-                const res = await api.getConfigFile();
-                setAllowedFileFormats(res.data.configFile.allowedFileFormats)
-            } catch (error) {
-                console.error(error)
-                setAllowedFileFormats(null)
+        // const fetchConfigFile = async () => {
+        //     try {
+        //         const res = await api.getConfigFile();
+        //         setAllowedFileFormats(res.data.configFile.allowedFileFormats)
+        //     } catch (error) {
+        //         console.error(error)
+        //         setAllowedFileFormats(null)
 
-            }
-        }
+        //     }
+        // }
         fetchFolders();
-        fetchConfigFile();
+        // fetchConfigFile();
     }, []);
 
     return (

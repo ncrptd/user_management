@@ -14,6 +14,7 @@ const Header = () => {
     const handleLogout = async () => {
         await dispatch(logout());
         navigate('/');
+
     };
 
     const theme = useTheme();

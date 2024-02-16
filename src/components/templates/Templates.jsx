@@ -26,7 +26,6 @@ const getFileTypeLabel = (fileType) => {
 
 const Templates = ({ templates }) => {
     const [selectedTemplate, setSelectedTemplate] = useState(null);
-
     const theme = useTheme();
     const handleTemplateSelection = (templateId) => {
         setSelectedTemplate(templateId === selectedTemplate ? null : templateId);

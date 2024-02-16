@@ -30,7 +30,7 @@ export const logout = createAsyncThunk(
             toast.success('Successfully logged out')
             return { message: 'Successfully logged out' };
         } catch (error) {
-            toast.error('Failed to Log Out')
+            toast.error('Failed to Log Out');
             return rejectWithValue(error.response ? error.response.data.message : 'Failed to log out');
         }
     }

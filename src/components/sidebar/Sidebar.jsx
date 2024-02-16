@@ -11,7 +11,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { getLoggedUser } from '../../utils/getLoggedUser';
 import { NavLink } from 'react-router-dom';
 import { Divider } from '@mui/material';
-import { Business, Close, CloudUpload, Home, Person, Settings } from '@mui/icons-material';
+import { Business, Close, CloudUpload, Home, Person, Settings, Inventory } from '@mui/icons-material';
 import { useTheme } from '@emotion/react';
 
 const navigationItems = [
@@ -20,6 +20,7 @@ const navigationItems = [
     { path: '/users', label: 'Users', icon: <Person />, roles: ['TENANT_ADMIN', 'ROOT_ADMIN'] },
     { path: '/upload', label: 'Upload', icon: <CloudUpload />, roles: ['USER'] },
     { path: '/configuration', label: 'Config', icon: <Settings />, roles: ['TENANT_ADMIN', 'ROOT_ADMIN'] },
+    { path: '/ui-template', label: 'UI Template', icon: <Inventory />, roles: ['USER'] }
 ];
 
 function Sidebar() {
