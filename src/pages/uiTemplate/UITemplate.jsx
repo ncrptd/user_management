@@ -190,9 +190,9 @@ function UITemplate() {
                 UI Template
 
             </Typography>
-            <TemplateTable templateData={templateData}
+            {templateData.length > 0 ? <TemplateTable templateData={templateData}
                 handleColumnDelete={handleColumnDelete}
-                calculateTotalPercentage={calculateTotalPercentage} />
+                calculateTotalPercentage={calculateTotalPercentage} /> : <p>No Template Found</p>}
 
             <SaveTemplateModal
                 templateNameInput={templateNameInput}

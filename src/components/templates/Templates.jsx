@@ -34,9 +34,9 @@ const Templates = ({ templates }) => {
     const handleUploadToGlobalFolder = async () => {
         if (selectedTemplate !== null) {
             const selectedTemplateObject = templates.find((template) => template.id === selectedTemplate);
-
+            const { fileName, organization, uploadedById, folderName, s3Bucket } = selectedTemplateObject;
             try {
-                await api.uploadGlobalTemplate(selectedTemplateObject);
+                await api.uploadGlobalTemplate({ fileName, organization, uploadedById, folderName, s3Bucket });
                 toast.success('Template Uploaded Successfully');
             } catch (error) {
                 console.error(error);

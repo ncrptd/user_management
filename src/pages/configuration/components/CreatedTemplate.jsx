@@ -27,7 +27,6 @@ const CreatedTemplate = ({ templateData, handleColumnDelete, calculateTotalPerce
 
     }
 
-    console.log('createdTemplate', templateData)
     return (
         <div style={{ marginTop: '30px' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
