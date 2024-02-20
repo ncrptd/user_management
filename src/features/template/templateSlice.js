@@ -13,6 +13,7 @@ const templateSlice = createSlice({
     initialState,
     reducers: {
         setEditColumnData: (state, action) => {
+            console.log('edit', action.payload)
             state.editedColumnData = action.payload.editedColumnData
             state.categoryIndex = action.payload.categoryIndex
             state.columnIndex = action.payload.columnIndex
@@ -25,7 +26,7 @@ const templateSlice = createSlice({
         },
         saveEditColumnData: (state, action) => {
             const updatedTemplateData = JSON.parse(JSON.stringify(state.templateData)); // create a deep copy
-
+            console.log('s', action.payload)
             if (
                 state.categoryIndex >= 0 &&
                 state.categoryIndex < updatedTemplateData.length &&
@@ -34,6 +35,7 @@ const templateSlice = createSlice({
             ) {
                 // Update the data with formData
                 const { formData } = action.payload;
+                console.log('f', formData)
                 let columnData = updatedTemplateData[state.categoryIndex].columns[state.columnIndex];
                 columnData = { ...columnData, ...formData }; // Update column data
 

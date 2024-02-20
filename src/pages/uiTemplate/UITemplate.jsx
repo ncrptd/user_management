@@ -7,10 +7,12 @@ import * as XLSX from 'xlsx';
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { setTemplateData } from "../../features/template/templateSlice";
-import TemplateTable from "./components/TemplateTable";
-import { Container, Typography } from "@mui/material";
+// import TemplateTable from "./components/TemplateTable";
+import { Container } from "@mui/material";
+// import { Typography } from "@mui/material";
 import EditColumnModal from './modals/EditColumnModal'
 import SaveTemplateModal from './modals/SaveTemplateModal'
+import AdminTemplate from "./components/AdminTemplate";
 function UITemplate() {
 
 
@@ -21,7 +23,19 @@ function UITemplate() {
 
     const excelDataTypes = ["Text", "Number", "Date", "Boolean"];
 
+
+    const [formData, setFormData] = useState({
+        columnName: "",
+        dataType: "",
+        defaultValue: "",
+        unitOfMeasure: "",
+        impactPercentage: 0,
+        category: "",
+
+    });
+
     const { templateData } = useSelector((state) => state.template);
+    console.log('tem', templateData)
     const dispatch = useDispatch();
 
 
@@ -142,29 +156,29 @@ function UITemplate() {
 
 
 
-    const handleColumnDelete = (categoryIndex, columnIndex) => {
+    // const handleColumnDelete = (categoryIndex, columnIndex) => {
 
-        const newData = JSON.parse(JSON.stringify(templateData));
+    //     const newData = JSON.parse(JSON.stringify(templateData));
 
-        if (
-            categoryIndex >= 0 &&
-            categoryIndex < newData.length &&
-            columnIndex >= 0 &&
-            columnIndex < newData[categoryIndex].columns.length
-        ) {
-            const updatedColumns = newData[categoryIndex].columns.filter((_, index) => index !== columnIndex);
-            newData[categoryIndex].columns = updatedColumns;
+    //     if (
+    //         categoryIndex >= 0 &&
+    //         categoryIndex < newData.length &&
+    //         columnIndex >= 0 &&
+    //         columnIndex < newData[categoryIndex].columns.length
+    //     ) {
+    //         const updatedColumns = newData[categoryIndex].columns.filter((_, index) => index !== columnIndex);
+    //         newData[categoryIndex].columns = updatedColumns;
 
-            if (updatedColumns.length === 0) {
-                newData.splice(categoryIndex, 1);
-            }
+    //         if (updatedColumns.length === 0) {
+    //             newData.splice(categoryIndex, 1);
+    //         }
 
-            // Dispatch an action to update the state
-            dispatch(setTemplateData({ templateData: newData }));
-        } else {
-            console.error('Invalid indices provided.');
-        }
-    };
+    //         // Dispatch an action to update the state
+    //         dispatch(setTemplateData({ templateData: newData }));
+    //     } else {
+    //         console.error('Invalid indices provided.');
+    //     }
+    // };
 
 
 
@@ -182,17 +196,18 @@ function UITemplate() {
         fetchGlobalTemplate();
     }, [dispatch]);
 
-    console.log('td', templateData)
 
     return (
         <Container sx={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <Typography variant="h4" gutterBottom sx={{ textAlign: 'center', fontWeight: 'bold' }}>
+            {/* <Typography variant="h4" gutterBottom sx={{ textAlign: 'center', fontWeight: 'bold' }}>
                 UI Template
 
             </Typography>
             {templateData.length > 0 ? <TemplateTable templateData={templateData}
                 handleColumnDelete={handleColumnDelete}
-                calculateTotalPercentage={calculateTotalPercentage} /> : <p>No Template Found</p>}
+                calculateTotalPercentage={calculateTotalPercentage} /> : <p>No Template Found</p>} */}
+
+            {templateData.length > 0 ? <AdminTemplate data={templateData} excelDataTypes={excelDataTypes} /> : <p>No Template Found</p>}
 
             <SaveTemplateModal
                 templateNameInput={templateNameInput}
@@ -201,7 +216,7 @@ function UITemplate() {
                 templateData={templateData}
                 handleDownloadTemplate={handleDownloadTemplate}
             />
-            <EditColumnModal excelDataTypes={excelDataTypes} />
+            <EditColumnModal excelDataTypes={excelDataTypes} formData={formData} setFormData={setFormData} />
 
         </Container>
     )

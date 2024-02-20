@@ -17,20 +17,11 @@ import { useTheme } from '@emotion/react';
 
 const categories = ['Environment', 'Social', 'Governance', 'Economic'];
 
-const EditColumnModal = ({ excelDataTypes }) => {
+const EditColumnModal = ({ excelDataTypes, formData, setFormData }) => {
 
     const { showEditColumnModal } = useSelector((state) => state.template);
 
 
-    const [formData, setFormData] = useState({
-        columnName: "",
-        dataType: "",
-        defaultValue: "",
-        unitOfMeasure: "",
-        impactPercentage: 0,
-        category: '',
-
-    });
 
     // Assuming editedColumnData is coming from Redux store or props
     const editedColumnData = useSelector((state) => state.template.editedColumnData);
@@ -45,6 +36,7 @@ const EditColumnModal = ({ excelDataTypes }) => {
 
 
     const handleSaveEditData = () => {
+        console.log('formData', formData)
         dispatch(saveEditColumnData({ formData }))
         handleClose();
     };
@@ -55,7 +47,8 @@ const EditColumnModal = ({ excelDataTypes }) => {
         if (editedColumnData) {
             // If editedColumnData exists, update formData
             setFormData(editedColumnData);
-        } else {
+        }
+        else {
             // If editedColumnData is null or undefined, reset formData
             setFormData({
                 columnName: "",
@@ -66,7 +59,7 @@ const EditColumnModal = ({ excelDataTypes }) => {
                 impactPercentage: 0,
             });
         }
-    }, [editedColumnData]);
+    }, [editedColumnData, setFormData]);
 
     return (
         <div >
@@ -83,15 +76,16 @@ const EditColumnModal = ({ excelDataTypes }) => {
 
                     }}
                 >
-                    <span
+                    {/* <span
                         style={{ position: 'absolute', top: '5px', right: '10px', cursor: 'pointer', color: 'red', fontSize: '2rem' }}
                         onClick={handleClose}
                     >
                         &times;
-                    </span>
-                    <Typography variant="h5">Edit Column Details</Typography>
+                    </span> */}
+                    {/* 
+                    <Typography variant="h5">Edit Column Details</Typography> */}
                     <form>
-                        <TextField
+                        {/* <TextField
                             label="Column Name"
                             type="text"
                             value={formData.columnName}
@@ -116,20 +110,7 @@ const EditColumnModal = ({ excelDataTypes }) => {
                             </Select>
                         </FormControl>
 
-                        <FormControl fullWidth sx={{ marginY: 1 }}>
-                            <InputLabel>Data Type</InputLabel>
-                            <Select
-                                value={formData.dataType}
-                                onChange={(e) => setFormData({ ...formData, dataType: e.target.value })}
-                            >
-                                <MenuItem value="">Select Data Type</MenuItem>
-                                {excelDataTypes.map((type) => (
-                                    <MenuItem key={type} value={type}>
-                                        {type}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
+                     
 
                         <TextField
                             label="Default Value"
@@ -161,8 +142,25 @@ const EditColumnModal = ({ excelDataTypes }) => {
                             }
                             fullWidth
                             sx={{ marginY: 1 }}
-                        />
+                        /> */}
 
+                        <FormControl fullWidth sx={{ marginY: 1 }}>
+                            <InputLabel>Data Type</InputLabel>
+                            <Select
+                                value={formData.dataType}
+                                onChange={(e) => {
+                                    console.log('e', e);
+                                    setFormData({ ...formData, dataType: e.target.value })
+                                }}
+                            >
+                                <MenuItem value="">Select Data Type</MenuItem>
+                                {excelDataTypes.map((type) => (
+                                    <MenuItem key={type} value={type}>
+                                        {type}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                         <Button
                             type="button"
                             variant="contained"
