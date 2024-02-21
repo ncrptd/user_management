@@ -127,7 +127,7 @@ const UploadedFiles = ({ uploadedFiles }) => {
                                 <TableCell>{getFileTypeLabel(file.fileType)}</TableCell>
                                 <TableCell>{file.organization || 'N/A'}</TableCell>
                                 <TableCell>{file.folderName}</TableCell>
-                                <TableCell>{new Date(file.uploadTimestamp).toLocaleString()}</TableCell>
+                                <TableCell>{new Date(file.createdAt).toLocaleString()}</TableCell>
                                 <TableCell>
                                     {file?.uploadedBy?.name}
                                 </TableCell>

@@ -19,7 +19,6 @@ const SaveTemplateModal = ({
     const handleClose = () => setOpen(false);
 
     const theme = useTheme();
-
     return (
         <div>
             {templateData.length > 0 && (

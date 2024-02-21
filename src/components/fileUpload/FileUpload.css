@@ -5,6 +5,7 @@
 	flex-direction: column;
 	padding: 30px;
 }
+
 .dropzone {
 	border: 2px dashed #cccccc;
 	border-radius: 4px;
@@ -50,14 +51,17 @@
 	gap: 10px;
 	text-align: center;
 }
+
 .upload-icon {
 	font-size: 3rem;
+	font-family: Arial, sans-serif; /* Adjust font family as needed */
 }
 
 .upload-elements .unsupported-error-msg {
 	color: red;
 	text-transform: capitalize;
 }
+
 .upload-elements .upload-successful {
 	color: green;
 	font-size: 1.5rem;
@@ -70,7 +74,9 @@
 .folder-dropdown select {
 	cursor: pointer;
 }
+
 .confidential-checkbox {
 	display: flex;
 	gap: 5px;
+	font-family: Arial, sans-serif; /* Adjust font family as needed */
 }

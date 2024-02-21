@@ -86,7 +86,6 @@ const FileUpload = () => {
         try {
             const file = acceptedFiles[0];
             setError(null);
-
             // Check if a folder is selected
             if (!selectedFolder) {
                 setError('Please select a folder before uploading.');
@@ -104,7 +103,6 @@ const FileUpload = () => {
                 setError('Unsupported file type');
                 return;
             }
-
             const formData = new FormData();
             formData.append('file', file);
             formData.append('confidential', confidential);

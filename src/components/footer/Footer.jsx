@@ -39,7 +39,7 @@ const Footer = () => {
                 textAlign: 'center'
             }}>
                 <Typography variant="body1" sx={{ display: 'flex', gap: '10px', textAlign: 'center', justifyContent: 'center', alignItems: 'center' }}>
-                    <p >Powered by <span style={{ color: theme.palette.secondary.brand }}>NIS</span>
+                    <p >Powered by <span style={{ color: theme.palette.secondary.brand }}>NORTH STAR IMPACT SOLUTION</span>
                     </p>
                     <Copyright />
 

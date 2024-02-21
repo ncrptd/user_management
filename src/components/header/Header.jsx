@@ -5,6 +5,7 @@ import { logout } from '../../features/auth/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { getLoggedUser } from '../../utils/getLoggedUser';
 import { useTheme } from '@emotion/react';
+import logo from '../../../public/assets/logo.jpg' // Adjust the path according to your project structure
 
 const Header = () => {
     const dispatch = useDispatch();
@@ -14,15 +15,15 @@ const Header = () => {
     const handleLogout = async () => {
         await dispatch(logout());
         navigate('/');
-
     };
 
     const theme = useTheme();
     return (
         <AppBar position="static" style={{ backgroundColor: theme.palette.primary.brand }}>
             <Toolbar>
-                <Typography variant="h6" style={{ flexGrow: 1, marginRight: '16px' }}>
-                    {loggedInUser?.organization}
+                <Typography variant="h6" style={{ flexGrow: 1, marginRight: '16px', textTransform: 'uppercase', display: 'flex', alignItems: 'center' }}>
+                    {/* {loggedInUser?.organization} */}
+                    <img src={logo} alt="Logo" style={{ height: '40px' }} />
                 </Typography>
 
                 <div style={{ display: 'flex', alignItems: 'center' }}>

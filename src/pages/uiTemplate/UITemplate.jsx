@@ -18,7 +18,8 @@ function UITemplate() {
 
     const [templateNameInput, setTemplateNameInput] = useState("");
     const [setFileUploadProgress] = useState(null);
-
+    const [relatedFile, setRelatedFile] = useState(null);
+    const [comment, setComment] = useState('');
     // const [setTemplates] = useState([]);
 
     const excelDataTypes = ["Text", "Number", "Date", "Boolean"];
@@ -35,9 +36,7 @@ function UITemplate() {
     });
 
     const { templateData } = useSelector((state) => state.template);
-    console.log('tem', templateData)
     const dispatch = useDispatch();
-
 
     const calculateTotalPercentage = (category) => {
         const categoryData = templateData.find((data) => data.category === category);
@@ -94,7 +93,8 @@ function UITemplate() {
 
         const formData = new FormData();
         formData.append('file', blob, `${templateName}.xlsx`); // Set filename using templateName parameter
-
+        formData.append('relatedFile', relatedFile);
+        formData.append('comment', comment)
         formData.append('templateData', JSON.stringify(templateData))
 
 
@@ -106,6 +106,8 @@ function UITemplate() {
             console.error('Error uploading file:', error);
             toast.error(`Upload Failed: ${error.response.data.error}.`);
 
+        } finally {
+            setComment('')
         }
     };
 
@@ -216,7 +218,10 @@ function UITemplate() {
                 templateData={templateData}
                 handleDownloadTemplate={handleDownloadTemplate}
             />
-            <EditColumnModal excelDataTypes={excelDataTypes} formData={formData} setFormData={setFormData} />
+            <EditColumnModal excelDataTypes={excelDataTypes} formData={formData} setFormData={setFormData} relatedFile={relatedFile} setRelatedFile={setRelatedFile} comment={comment}
+
+                setComment={setComment}
+            />
 
         </Container>
     )

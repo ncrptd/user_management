@@ -86,7 +86,7 @@ const Templates = ({ templates }) => {
                             <TableCell>{getFileTypeLabel(file.fileType)}</TableCell>
                             <TableCell>{file.organization || 'N/A'}</TableCell>
                             <TableCell>{file.folderName}</TableCell>
-                            <TableCell>{new Date(file.uploadTimestamp).toLocaleString()}</TableCell>
+                            <TableCell>{new Date(file.createdAt).toLocaleString()}</TableCell>
                             <TableCell>
                                 <Button
                                     variant="outlined"

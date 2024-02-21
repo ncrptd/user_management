@@ -3,24 +3,21 @@ import {
     Box,
     Typography,
     TextField,
-    Select,
-    MenuItem,
     Button,
-    FormControl,
-    InputLabel,
+    Input,
 } from '@mui/material';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { saveEditColumnData, toggleEditColumnModal } from '../../../features/template/templateSlice';
+import { toggleEditColumnModal, saveEditColumnData } from '../../../features/template/templateSlice';
 import { useEffect, useState } from 'react';
 import { useTheme } from '@emotion/react';
+import { CloudUpload } from '@mui/icons-material';
+import toast from 'react-hot-toast';
 
-const categories = ['Environment', 'Social', 'Governance', 'Economic'];
 
-const EditColumnModal = ({ excelDataTypes, formData, setFormData }) => {
-
+const EditColumnModal = ({ formData, setFormData, setRelatedFile, comment, setComment }) => {
+    const [selectedFile, setSelectedFile] = useState(null)
     const { showEditColumnModal } = useSelector((state) => state.template);
-
 
 
     // Assuming editedColumnData is coming from Redux store or props
@@ -31,17 +28,47 @@ const EditColumnModal = ({ excelDataTypes, formData, setFormData }) => {
 
     const handleClose = () => {
         dispatch(toggleEditColumnModal(false))
+        setSelectedFile(null)
     };
 
 
 
     const handleSaveEditData = () => {
-        console.log('formData', formData)
-        dispatch(saveEditColumnData({ formData }))
+        // Check if default value and comment are provided
+        if (!formData.defaultValue || !comment) {
+            alert('Please provide a default value and comment.');
+            return;
+        }
+
+        // Dispatch action to save edited data
+        console.log('selectedFile', selectedFile)
+        setRelatedFile(selectedFile)
+        dispatch(saveEditColumnData({ formData }));
         handleClose();
     };
 
 
+    const handleFileSelect = async (e) => {
+        const file = e.target.files[0];
+
+
+        const allowedFileFormats = ["xls", "xlsx", "csv", "pdf", "doc", "docx", "json"];
+
+        const isFileFormatAllowed = (fileName) => {
+            const fileExtension = fileName.split('.').pop().toLowerCase();
+            return allowedFileFormats.includes(fileExtension);
+        };
+
+        if (!isFileFormatAllowed(file.name) || allowedFileFormats.length <= 0) {
+            toast.error('Unsupported file type');
+            return;
+        }
+
+
+        setSelectedFile(file)
+
+
+    }
 
     useEffect(() => {
         if (editedColumnData) {
@@ -62,7 +89,7 @@ const EditColumnModal = ({ excelDataTypes, formData, setFormData }) => {
     }, [editedColumnData, setFormData]);
 
     return (
-        <div >
+        <div>
             <Modal open={showEditColumnModal} onClose={handleClose}>
                 <Box
                     sx={{
@@ -72,111 +99,75 @@ const EditColumnModal = ({ excelDataTypes, formData, setFormData }) => {
                         transform: 'translate(-50%, -50%)',
                         backgroundColor: 'white',
                         padding: '20px',
-                        borderRadius: '15px'
-
+                        borderRadius: '15px',
+                        width: '400px', // Adjust width as needed
                     }}
                 >
-                    {/* <span
+                    <span
                         style={{ position: 'absolute', top: '5px', right: '10px', cursor: 'pointer', color: 'red', fontSize: '2rem' }}
                         onClick={handleClose}
                     >
                         &times;
-                    </span> */}
-                    {/* 
-                    <Typography variant="h5">Edit Column Details</Typography> */}
+                    </span>
                     <form>
-                        {/* <TextField
-                            label="Column Name"
-                            type="text"
-                            value={formData.columnName}
-                            onChange={(e) => setFormData({ ...formData, columnName: e.target.value })}
-                            required
-                            fullWidth
-                            sx={{ marginY: 1 }}
-                        />
-
-                        <FormControl fullWidth sx={{ marginY: 1 }}>
-                            <InputLabel>Category</InputLabel>
-                            <Select
-                                value={formData.category}
-                                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                            >
-                                <MenuItem value="">Select Category</MenuItem>
-                                {categories.map((type) => (
-                                    <MenuItem key={type} value={type}>
-                                        {type}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-
-                     
-
+                        <Typography variant="h6" sx={{ paddingY: '10px' }}>Indicator: {formData.columnName}</Typography>
                         <TextField
-                            label="Default Value"
+                            label="Value"
                             type="text"
                             value={formData.defaultValue}
                             onChange={(e) => setFormData({ ...formData, defaultValue: e.target.value })}
                             fullWidth
-                            sx={{ marginY: 1 }}
+                            sx={{ marginY: 1, }}
                         />
-
                         <TextField
-                            label="Unit Of Measure"
+                            label="Comment"
                             type="text"
-                            value={formData.unitOfMeasure}
-                            onChange={(e) => setFormData({ ...formData, unitOfMeasure: e.target.value })}
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
                             fullWidth
                             sx={{ marginY: 1 }}
                         />
+                        <Typography variant="body1" sx={{ marginTop: 1 }}>
+                            Upload File:
+                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 1 }}>
+                            <Input
+                                type="file"
+                                id="fileInput"
+                                onChange={(e) =>
+                                    handleFileSelect(e)
+                                }
+                                sx={{ display: 'none' }}
+                            />
+                            <label htmlFor="fileInput">
+                                <Button
+                                    variant="contained"
+                                    component="span"
+                                    startIcon={<CloudUpload />}
+                                    sx={{ marginRight: 1 }}
+                                >
+                                    Choose File
+                                </Button>
+                            </label>
+                            <Typography variant="body1" sx={{ flex: 1 }}>
+                                {selectedFile ? selectedFile.name : 'No file chosen'}
+                            </Typography>
+                        </Box>
 
-                        <TextField
-                            label="Impact Percentage"
-                            type="number"
-                            value={formData.impactPercentage}
-                            onChange={(e) =>
-                                setFormData((prevColumn) => ({
-                                    ...prevColumn,
-                                    impactPercentage: e.target.value.trim(),
-                                }))
-                            }
-                            fullWidth
-                            sx={{ marginY: 1 }}
-                        /> */}
-
-                        <FormControl fullWidth sx={{ marginY: 1 }}>
-                            <InputLabel>Data Type</InputLabel>
-                            <Select
-                                value={formData.dataType}
-                                onChange={(e) => {
-                                    console.log('e', e);
-                                    setFormData({ ...formData, dataType: e.target.value })
-                                }}
-                            >
-                                <MenuItem value="">Select Data Type</MenuItem>
-                                {excelDataTypes.map((type) => (
-                                    <MenuItem key={type} value={type}>
-                                        {type}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
                         <Button
                             type="button"
                             variant="contained"
-                            onClick={() => handleSaveEditData()}
+                            onClick={handleSaveEditData}
                             sx={{
                                 marginY: 2,
                                 backgroundColor: theme.palette.primary.brand,
                                 '&:hover': {
                                     backgroundColor: theme.palette.secondary.brand,
-
                                 },
                             }}
                         >
                             Save
                         </Button>
-
                     </form>
                 </Box>
             </Modal>
