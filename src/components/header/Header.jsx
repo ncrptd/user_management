@@ -22,8 +22,7 @@ const Header = () => {
         <AppBar position="static" style={{ backgroundColor: theme.palette.primary.brand }}>
             <Toolbar>
                 <Typography variant="h6" style={{ flexGrow: 1, marginRight: '16px', textTransform: 'uppercase', display: 'flex', alignItems: 'center' }}>
-                    {/* {loggedInUser?.organization} */}
-                    <img src={logo} alt="Logo" style={{ height: '40px' }} />
+                    <img src={logo} alt="Logo" style={{ height: '50px', marginRight: '10px' }} />
                 </Typography>
 
                 <div style={{ display: 'flex', alignItems: 'center' }}>

@@ -35,9 +35,14 @@ const EditColumnModal = ({ formData, setFormData, setRelatedFile, comment, setCo
 
     const handleSaveEditData = () => {
         // Check if default value and comment are provided
-        if (!formData.defaultValue || !comment) {
-            alert('Please provide a default value and comment.');
+
+        if (!formData.defaultValue) {
+            toast.error('Please provide a value');
             return;
+        } else if (!comment) {
+            toast.error('Please provide a comment');
+            return
+
         }
 
         // Dispatch action to save edited data
@@ -111,22 +116,35 @@ const EditColumnModal = ({ formData, setFormData, setRelatedFile, comment, setCo
                     </span>
                     <form>
                         <Typography variant="h6" sx={{ paddingY: '10px' }}>Indicator: {formData.columnName}</Typography>
+
                         <TextField
                             label="Value"
                             type="text"
                             value={formData.defaultValue}
                             onChange={(e) => setFormData({ ...formData, defaultValue: e.target.value })}
                             fullWidth
+                            required
                             sx={{ marginY: 1, }}
                         />
                         <TextField
+                            id="comment"
                             label="Comment"
                             type="text"
                             value={comment}
                             onChange={(e) => setComment(e.target.value)}
                             fullWidth
-                            sx={{ marginY: 1 }}
+                            multiline
+                            rows={4}
+                            variant="outlined"
+                            required
+                            InputLabelProps={{ shrink: true }} // Ensure the label remains visible when value is present
+                            InputProps={{
+                                style: { resize: 'vertical' },
+                            }}
+                            sx={{ marginTop: 1 }}
                         />
+
+
                         <Typography variant="body1" sx={{ marginTop: 1 }}>
                             Upload File:
                         </Typography>

@@ -26,7 +26,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useTheme } from '@emotion/react';
 import { useDispatch } from 'react-redux';
 import { setEditColumnData, toggleEditColumnModal } from '../../../features/template/templateSlice';
-import { Download, Visibility } from '@mui/icons-material';
+import { Visibility } from '@mui/icons-material';
 
 const AdminTemplate = ({ data }) => {
     const [currentTab, setCurrentTab] = useState(0);
@@ -104,9 +104,9 @@ const AdminTemplate = ({ data }) => {
                                         <EditIcon />
                                     </IconButton>
 
-                                    <IconButton aria-label="download" onClick={() => console.log('Download')}>
+                                    {/* <IconButton aria-label="download" onClick={() => console.log('Download')}>
                                         <Download />
-                                    </IconButton>
+                                    </IconButton> */}
 
                                 </TableCell>
                             </TableRow>
@@ -127,16 +127,24 @@ const AdminTemplate = ({ data }) => {
                     textColor="white"
                     variant="fullWidth"
                     aria-label="full width tabs example"
-                    sx={{ '& .MuiTabs-indicator': { backgroundColor: theme.palette.secondary.brand } }}
+                    sx={{
+                        borderBottom: '1px solid #ccc', // Add border at the bottom of the tabs
+                    }}
                 >
                     {data.map((item, index) => (
-                        <Tab key={index} label={item.category}
-                            sx={{ '&.Mui-selected': { color: theme.palette.secondary.brand } }}
-
-
+                        <Tab
+                            key={index}
+                            label={item.category}
+                            sx={{
+                                '&.Mui-selected': {
+                                    color: theme.palette.secondary.brand,
+                                    borderBottom: '2px solid', // Add border to the bottom of the selected tab
+                                },
+                            }}
                         />
                     ))}
                 </Tabs>
+
             </AppBar>
 
             <Box sx={{ padding: '20px' }}>
