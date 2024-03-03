@@ -1,8 +1,8 @@
 import axios from "axios";
-const baseUrl = import.meta.env.NODE_ENV === 'production' ? 'api/v1' : "http://localhost:3000/api/v1";
-console.log('baseUrl', import.meta.env.NODE_ENV)
+// const baseUrl = import.meta.env.NODE_ENV === 'production' ? 'api/v1' : "http://localhost:3000/api/v1";
+
 const API = axios.create({
-    baseURL: baseUrl
+    baseURL: "http://localhost:3000/api/v1"
 
 });
 
