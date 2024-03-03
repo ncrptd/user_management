@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 // import { toggleCreateTenantModal } from '../features/modals/modalsSlice';
 import { useEffect } from 'react';
 import { getTenants } from '../features/users/usersSlice';
+import { Container, Typography } from '@mui/material';
 
 
 
@@ -18,14 +19,17 @@ function Tenants() {
     }, [dispatch])
 
     return (
-        <div>
+        <Container sx={{ padding: '20px', }}>
 
-            <h1>Tenants</h1>
-            {/* <div className='create-user-btn-container'>
-                <button className='create-user-btn' onClick={handleCreateUser}>Create</button>
-            </div> */}
-            <UserManagement users={tenants} param='root' />
-        </div >
+            <Typography variant="h4" gutterBottom sx={{ textAlign: 'center', fontWeight: 'bold' }}>
+                Tenants
+
+            </Typography>
+
+
+            <UserManagement users={tenants} />
+
+        </Container>
     )
 }
 

@@ -10,10 +10,9 @@ import Login from './pages/login/Login.jsx';
 import RootLayout from './rootLayout/RootLayout.jsx';
 import Tenants from './pages/Tenants.jsx';
 import Users from './pages/Users.jsx';
-import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Provider } from 'react-redux'
 import store from './app/store.js';
-import RequiresAuth from './auth/RequiresAuth.jsx';
+import RequiresAuthentication from './auth/RequiresAuthentication.jsx';
 import Home from './pages/home/Home.jsx';
 import Upload from './pages/upload/Upload.jsx';
 import Configuration from './pages/configuration/Configuration.jsx';
@@ -22,12 +21,15 @@ import UserDetails from './pages/user-details/UserDetails.jsx';
 import UITemplate from './pages/uiTemplate/UITemplate.jsx';
 
 
+
+
+
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <RequiresAuth>
+    element: <RequiresAuthentication>
       <RootLayout />
-    </RequiresAuth>,
+    </RequiresAuthentication>,
     children: [
       {
         path: '/',
@@ -36,27 +38,36 @@ const router = createBrowserRouter([
       {
         path: 'user-details/:id',
         element: <UserDetails />
-      }
-      , {
+      },
+      {
         path: 'tenants',
-        element: <Tenants />
+        element: <RequiresAuthentication roles={['ROOT_ADMIN']}>
+          <Tenants />
+        </RequiresAuthentication>
       },
       {
         path: 'users',
-        element: <Users />
-
+        element: <RequiresAuthentication roles={['ROOT_ADMIN', 'TENANT_ADMIN']}>
+          <Users />
+        </RequiresAuthentication>
       },
       {
         path: 'upload',
-        element: <Upload />
+        element: <RequiresAuthentication roles={['USER']}>
+          <Upload />
+        </RequiresAuthentication>
       },
       {
         path: 'configuration',
-        element: <Configuration />
+        element: <RequiresAuthentication roles={['TENANT_ADMIN']}>
+          <Configuration />
+        </RequiresAuthentication>
       },
       {
         path: 'ui-template',
-        element: <UITemplate />
+        element: <RequiresAuthentication roles={['USER']}>
+          <UITemplate />
+        </RequiresAuthentication>
       }
     ]
   },
@@ -64,10 +75,8 @@ const router = createBrowserRouter([
     path: "login",
     element: <Login />,
   },
-
-
-
 ]);
+
 
 
 let theme = createTheme({
@@ -86,12 +95,10 @@ let theme = createTheme({
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <GoogleOAuthProvider clientId="472067935753-epfm6rgqqluit7700dpbubo2fv46grm3.apps.googleusercontent.com">
-      <Provider store={store}>
-        <ThemeProvider theme={theme}>
-          <RouterProvider router={router} />
-        </ThemeProvider>
-      </Provider>
-    </GoogleOAuthProvider>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </Provider>
   </React.StrictMode>,
 );

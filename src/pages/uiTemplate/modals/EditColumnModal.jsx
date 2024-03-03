@@ -46,7 +46,6 @@ const EditColumnModal = ({ formData, setFormData, setRelatedFile, comment, setCo
         }
 
         // Dispatch action to save edited data
-        console.log('selectedFile', selectedFile)
         setRelatedFile(selectedFile)
         dispatch(saveEditColumnData({ formData }));
         handleClose();

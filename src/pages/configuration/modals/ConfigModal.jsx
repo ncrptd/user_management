@@ -53,7 +53,6 @@ const ConfigModal = () => {
                             Array.isArray(jsonContent.allowedFileFormats) &&
                             jsonContent.allowedFileFormats.every((format) => typeof format === 'string')
                         ) {
-                            console.log('Valid JSON structure:', jsonContent);
 
                             // Proceed with further actions, e.g., uploading the file
                             const formData = new FormData();

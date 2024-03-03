@@ -142,7 +142,6 @@ export const usersSlice = createSlice({
             .addCase(getUsers.rejected, (state, action) => {
                 state.status = 'error';
                 state.error = action.payload || 'Failed to fetch users';
-                console.log('failed fetching users', state);
             })
             //TENANTS
             .addCase(getTenants.pending, (state) => {
@@ -156,7 +155,6 @@ export const usersSlice = createSlice({
             .addCase(getTenants.rejected, (state, action) => {
                 state.status = 'error';
                 state.error = action.payload || 'Failed to fetch tenants';
-                console.log('failed fetching tenants', state);
             })
             //ADD User
             .addCase(createUser.pending, (state) => {
@@ -164,14 +162,12 @@ export const usersSlice = createSlice({
                 state.error = null;
             })
             .addCase(createUser.fulfilled, (state, action) => {
-                console.log('success user create', state)
                 state.status = 'success';
                 state.allUsers.push(action.payload)
             })
             .addCase(createUser.rejected, (state, action) => {
                 state.status = 'error';
                 state.error = action.payload || 'Failed to create user';
-                console.log('failed user create', state)
 
             })
             //REMOVE user
@@ -237,7 +233,6 @@ export const usersSlice = createSlice({
             .addCase(disableUser.fulfilled, (state, action) => {
                 state.status = 'success';
                 // Assuming your API returns the disabled user, update the state accordingly
-                console.log('disP', action.payload)
                 state.allUsers = state.allUsers.map((user) => user.id === action.payload.id ? { ...action.payload } : user);
             })
             .addCase(disableUser.rejected, (state, action) => {

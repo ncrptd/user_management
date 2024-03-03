@@ -19,7 +19,7 @@ const navigationItems = [
     { path: '/tenants', label: 'Tenants', icon: <Business />, roles: ['ROOT_ADMIN'] },
     { path: '/users', label: 'Users', icon: <Person />, roles: ['TENANT_ADMIN', 'ROOT_ADMIN'] },
     { path: '/upload', label: 'Upload', icon: <CloudUpload />, roles: ['USER'] },
-    { path: '/configuration', label: 'Config', icon: <Settings />, roles: ['TENANT_ADMIN', 'ROOT_ADMIN'] },
+    { path: '/configuration', label: 'Config', icon: <Settings />, roles: ['TENANT_ADMIN',] },
     { path: '/ui-template', label: 'UI Template', icon: <Inventory />, roles: ['USER'] }
 ];
 

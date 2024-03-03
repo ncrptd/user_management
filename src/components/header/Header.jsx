@@ -5,7 +5,8 @@ import { logout } from '../../features/auth/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { getLoggedUser } from '../../utils/getLoggedUser';
 import { useTheme } from '@emotion/react';
-import logo from '../../../public/assets/logo.jpg' // Adjust the path according to your project structure
+// import logo from '../../../public/assets/logo.jpg' 
+import logo from '/assets/logo.jpg'
 
 const Header = () => {
     const dispatch = useDispatch();
